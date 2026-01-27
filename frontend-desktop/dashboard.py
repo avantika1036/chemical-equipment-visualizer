@@ -2,8 +2,10 @@ from PyQt5.QtWidgets import (
     QWidget, QLabel, QPushButton,
     QVBoxLayout, QHBoxLayout,
     QFrame, QListWidget,
-    QMessageBox, QFileDialog
+    QMessageBox, QFileDialog,
+    QTableWidget, QTableWidgetItem
 )
+
 from PyQt5.QtCore import Qt
 import requests
 
@@ -33,6 +35,32 @@ class DashboardWindow(QWidget):
 
         self.init_ui()
         self.load_history()
+    
+    def update_table(self, rows):
+        self.table.setRowCount(len(rows))
+
+        for row_index, row in enumerate(rows):
+            self.table.setItem(
+                row_index, 0,
+                QTableWidgetItem(str(row["equipmentName"]))
+            )
+            self.table.setItem(
+                row_index, 1,
+                QTableWidgetItem(str(row["type"]))
+            )
+            self.table.setItem(
+                row_index, 2,
+                QTableWidgetItem(str(row["flowrate"]))
+            )
+            self.table.setItem(
+                row_index, 3,
+                QTableWidgetItem(str(row["pressure"]))
+            )
+            self.table.setItem(
+                row_index, 4,
+                QTableWidgetItem(str(row["temperature"]))
+            )
+
 
     # ==========================
     # UI
@@ -122,6 +150,27 @@ class DashboardWindow(QWidget):
 
         self.setLayout(main_layout)
 
+        # ---------------- DATA TABLE ----------------
+        table_label = QLabel("Equipment Data Table")
+        table_label.setStyleSheet("font-size:16px;font-weight:600;")
+
+        self.table = QTableWidget()
+        self.table.setColumnCount(5)
+        self.table.setHorizontalHeaderLabels([
+            "Equipment Name",
+            "Type",
+            "Flowrate",
+            "Pressure",
+            "Temperature"
+        ])
+
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.setAlternatingRowColors(True)
+
+        main_layout.addWidget(table_label)
+        main_layout.addWidget(self.table)
+
+
     # ==========================
     # CSV UPLOAD
     # ==========================
@@ -158,6 +207,7 @@ class DashboardWindow(QWidget):
             )
 
             self.draw_charts(data)
+            self.update_table(data["data"])
             self.load_history()
 
         except Exception as e:
