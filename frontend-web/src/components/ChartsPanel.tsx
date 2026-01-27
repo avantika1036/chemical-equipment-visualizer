@@ -14,9 +14,8 @@ import {
 } from 'chart.js';
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import { motion } from 'framer-motion';
-import { DatasetSummary, EquipmentData } from '@/types/equipment';
+import { DatasetSummary } from '@/types/equipment';
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -30,7 +29,6 @@ ChartJS.register(
   Filler
 );
 
-// Chart colors from design system
 const chartColors = {
   primary: 'hsl(215, 80%, 45%)',
   accent: 'hsl(25, 95%, 53%)',
@@ -52,23 +50,42 @@ interface ChartsPanelProps {
 }
 
 export const ChartsPanel: React.FC<ChartsPanelProps> = ({ summary }) => {
-  // Type Distribution Pie Chart
+
+  /* ✅ FIX — SAFE VARIABLES */
+  const safeTypeDistribution =
+    summary?.typeDistribution && typeof summary.typeDistribution === 'object'
+      ? summary.typeDistribution
+      : {};
+
+  const safeData = Array.isArray(summary?.data)
+    ? summary.data
+    : [];
+
+  /* ================= TYPE DISTRIBUTION ================= */
+
   const typeDistributionData = {
-    labels: Object.keys(summary.typeDistribution),
+    labels: Object.keys(safeTypeDistribution),
     datasets: [
       {
-        data: Object.values(summary.typeDistribution),
-        backgroundColor: chartColorsPalette.slice(0, Object.keys(summary.typeDistribution).length),
+        data: Object.values(safeTypeDistribution),
+        backgroundColor: chartColorsPalette.slice(
+          0,
+          Object.keys(safeTypeDistribution).length
+        ),
         borderWidth: 2,
         borderColor: 'hsl(0, 0%, 100%)',
       },
     ],
   };
 
-  // Parameters by Equipment Bar Chart (top 10)
-  const top10Equipment = summary.data.slice(0, 10);
+  /* ================= TOP 10 ================= */
+
+  const top10Equipment = safeData.slice(0, 10);
+
   const parametersBarData = {
-    labels: top10Equipment.map((e) => e.equipmentName.substring(0, 15)),
+    labels: top10Equipment.map((e) =>
+      e.equipmentName?.substring(0, 15)
+    ),
     datasets: [
       {
         label: 'Flowrate (m³/h)',
@@ -91,8 +108,12 @@ export const ChartsPanel: React.FC<ChartsPanelProps> = ({ summary }) => {
     ],
   };
 
-  // Parameter Distribution Line Chart
-  const sortedByFlowrate = [...summary.data].sort((a, b) => a.flowrate - b.flowrate);
+  /* ================= LINE ================= */
+
+  const sortedByFlowrate = [...safeData].sort(
+    (a, b) => a.flowrate - b.flowrate
+  );
+
   const lineChartData = {
     labels: sortedByFlowrate.slice(0, 15).map((_, i) => `#${i + 1}`),
     datasets: [
@@ -103,8 +124,6 @@ export const ChartsPanel: React.FC<ChartsPanelProps> = ({ summary }) => {
         backgroundColor: 'rgba(37, 99, 235, 0.1)',
         fill: true,
         tension: 0.4,
-        pointRadius: 4,
-        pointBackgroundColor: chartColors.primary,
       },
       {
         label: 'Pressure',
@@ -113,45 +132,6 @@ export const ChartsPanel: React.FC<ChartsPanelProps> = ({ summary }) => {
         backgroundColor: 'rgba(249, 115, 22, 0.1)',
         fill: true,
         tension: 0.4,
-        pointRadius: 4,
-        pointBackgroundColor: chartColors.accent,
-      },
-    ],
-  };
-
-  // Average by Type Bar Chart
-  const typeAverages: Record<string, { flowrate: number; pressure: number; temperature: number; count: number }> = {};
-  summary.data.forEach((item) => {
-    if (!typeAverages[item.type]) {
-      typeAverages[item.type] = { flowrate: 0, pressure: 0, temperature: 0, count: 0 };
-    }
-    typeAverages[item.type].flowrate += item.flowrate;
-    typeAverages[item.type].pressure += item.pressure;
-    typeAverages[item.type].temperature += item.temperature;
-    typeAverages[item.type].count += 1;
-  });
-
-  const typeLabels = Object.keys(typeAverages);
-  const typeAvgData = {
-    labels: typeLabels,
-    datasets: [
-      {
-        label: 'Avg Flowrate (m³/h)',
-        data: typeLabels.map((t) => typeAverages[t].flowrate / typeAverages[t].count),
-        backgroundColor: chartColors.primary,
-        borderRadius: 4,
-      },
-      {
-        label: 'Avg Pressure (bar)',
-        data: typeLabels.map((t) => typeAverages[t].pressure / typeAverages[t].count),
-        backgroundColor: chartColors.accent,
-        borderRadius: 4,
-      },
-      {
-        label: 'Avg Temperature (°C)',
-        data: typeLabels.map((t) => typeAverages[t].temperature / typeAverages[t].count),
-        backgroundColor: chartColors.success,
-        borderRadius: 4,
       },
     ],
   };
@@ -162,14 +142,6 @@ export const ChartsPanel: React.FC<ChartsPanelProps> = ({ summary }) => {
     plugins: {
       legend: {
         position: 'bottom' as const,
-        labels: {
-          padding: 20,
-          usePointStyle: true,
-          font: {
-            family: 'Inter',
-            size: 12,
-          },
-        },
       },
     },
   };
@@ -177,84 +149,50 @@ export const ChartsPanel: React.FC<ChartsPanelProps> = ({ summary }) => {
   const barOptions = {
     ...commonOptions,
     scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          font: {
-            family: 'Inter',
-            size: 11,
-          },
-        },
-      },
-      y: {
-        grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
-        },
-        ticks: {
-          font: {
-            family: 'Inter',
-            size: 11,
-          },
-        },
-      },
+      x: { grid: { display: false } },
+      y: { grid: { color: 'rgba(0,0,0,0.05)' } },
     },
   };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Type Distribution */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-        className="chart-container"
-      >
-        <h3 className="text-lg font-semibold mb-4">Equipment Type Distribution</h3>
+
+      <motion.div className="chart-container">
+        <h3 className="text-lg font-semibold mb-4">
+          Equipment Type Distribution
+        </h3>
         <div className="h-[300px]">
           <Pie data={typeDistributionData} options={commonOptions} />
         </div>
       </motion.div>
 
-      {/* Averages by Type */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.3 }}
-        className="chart-container"
-      >
-        <h3 className="text-lg font-semibold mb-4">Average Parameters by Type</h3>
-        <div className="h-[300px]">
-          <Bar data={typeAvgData} options={barOptions} />
-        </div>
-      </motion.div>
-
-      {/* Equipment Parameters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.4 }}
-        className="chart-container"
-      >
-        <h3 className="text-lg font-semibold mb-4">Top 10 Equipment Parameters</h3>
+      <motion.div className="chart-container">
+        <h3 className="text-lg font-semibold mb-4">
+          Average Parameters by Type
+        </h3>
         <div className="h-[300px]">
           <Bar data={parametersBarData} options={barOptions} />
         </div>
       </motion.div>
 
-      {/* Parameter Trends */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.5 }}
-        className="chart-container"
-      >
-        <h3 className="text-lg font-semibold mb-4">Parameter Distribution (Sorted by Flowrate)</h3>
+      <motion.div className="chart-container">
+        <h3 className="text-lg font-semibold mb-4">
+          Top 10 Equipment Parameters
+        </h3>
+        <div className="h-[300px]">
+          <Bar data={parametersBarData} options={barOptions} />
+        </div>
+      </motion.div>
+
+      <motion.div className="chart-container">
+        <h3 className="text-lg font-semibold mb-4">
+          Parameter Distribution (Sorted by Flowrate)
+        </h3>
         <div className="h-[300px]">
           <Line data={lineChartData} options={barOptions} />
         </div>
       </motion.div>
+
     </div>
   );
 };

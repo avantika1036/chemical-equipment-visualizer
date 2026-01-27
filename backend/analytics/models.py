@@ -10,7 +10,11 @@ class EquipmentDataset(models.Model):
     avg_pressure = models.FloatField()
     avg_temperature = models.FloatField()
 
+    # Stores count per equipment type
     type_distribution = models.JSONField()
+
+    # ✅ NEW: stores full CSV rows
+    data = models.JSONField(default=list)
 
     def __str__(self):
         return f"Dataset {self.id} - {self.uploaded_at.strftime('%Y-%m-%d %H:%M')}"

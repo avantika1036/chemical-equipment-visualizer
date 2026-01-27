@@ -1,10 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Chemical Equipment Visualizer - Industrial Design System */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @layer base {
   :root {
@@ -18,23 +18,18 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 25% 10%;
 
-    /* Deep industrial blue */
     --primary: 215 80% 35%;
     --primary-foreground: 0 0% 100%;
 
-    /* Light steel gray */
     --secondary: 220 15% 92%;
     --secondary-foreground: 220 25% 20%;
 
-    /* Muted industrial tones */
     --muted: 220 15% 94%;
     --muted-foreground: 220 10% 45%;
 
-    /* Accent - Industrial orange */
     --accent: 25 95% 53%;
     --accent-foreground: 0 0% 100%;
 
-    /* Status colors */
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
@@ -47,21 +42,18 @@
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    /* Borders and inputs */
     --border: 220 15% 88%;
     --input: 220 15% 88%;
     --ring: 215 80% 35%;
 
     --radius: 0.5rem;
 
-    /* Chart colors */
     --chart-1: 215 80% 45%;
     --chart-2: 25 95% 53%;
     --chart-3: 142 76% 36%;
     --chart-4: 280 65% 60%;
     --chart-5: 199 89% 48%;
 
-    /* Sidebar */
     --sidebar-background: 220 25% 12%;
     --sidebar-foreground: 220 10% 85%;
     --sidebar-primary: 215 80% 55%;
@@ -71,12 +63,10 @@
     --sidebar-border: 220 20% 20%;
     --sidebar-ring: 215 80% 55%;
 
-    /* Data table */
     --table-header: 220 20% 95%;
     --table-row-hover: 215 80% 97%;
     --table-border: 220 15% 90%;
 
-    /* Upload zone */
     --upload-border: 215 80% 60%;
     --upload-bg: 215 80% 97%;
     --upload-bg-hover: 215 80% 94%;
@@ -85,51 +75,37 @@
   .dark {
     --background: 220 25% 8%;
     --foreground: 220 10% 95%;
-
     --card: 220 25% 12%;
     --card-foreground: 220 10% 95%;
-
     --popover: 220 25% 12%;
     --popover-foreground: 220 10% 95%;
-
     --primary: 215 80% 55%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 220 20% 18%;
     --secondary-foreground: 220 10% 85%;
-
     --muted: 220 20% 15%;
     --muted-foreground: 220 10% 60%;
-
     --accent: 25 95% 53%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
-
     --success: 142 70% 45%;
     --success-foreground: 0 0% 100%;
-
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-
     --info: 199 89% 55%;
     --info-foreground: 0 0% 100%;
-
     --border: 220 20% 20%;
     --input: 220 20% 20%;
     --ring: 215 80% 55%;
-
     --chart-1: 215 80% 55%;
     --chart-2: 25 95% 58%;
     --chart-3: 142 70% 50%;
     --chart-4: 280 65% 65%;
     --chart-5: 199 89% 55%;
-
     --table-header: 220 25% 15%;
     --table-row-hover: 215 60% 15%;
     --table-border: 220 20% 20%;
-
     --upload-border: 215 80% 50%;
     --upload-bg: 215 60% 12%;
     --upload-bg-hover: 215 60% 18%;
@@ -143,20 +119,25 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-semibold tracking-tight;
   }
 
-  code, pre {
-    font-family: 'JetBrains Mono', monospace;
+  code,
+  pre {
+    font-family: "JetBrains Mono", monospace;
   }
 }
 
 @layer components {
-  /* Data grid styling */
   .data-grid {
     @apply w-full border-collapse;
   }
@@ -173,7 +154,6 @@
     @apply bg-[hsl(var(--table-row-hover))];
   }
 
-  /* Upload zone */
   .upload-zone {
     @apply border-2 border-dashed border-[hsl(var(--upload-border))] rounded-xl p-8 transition-all duration-200 cursor-pointer;
     @apply bg-[hsl(var(--upload-bg))] hover:bg-[hsl(var(--upload-bg-hover))];
@@ -183,30 +163,25 @@
     @apply border-primary bg-[hsl(var(--upload-bg-hover))] scale-[1.02];
   }
 
-  /* Stat card */
   .stat-card {
     @apply bg-card rounded-xl p-6 shadow-sm border border-border transition-all duration-200;
     @apply hover:shadow-md hover:border-primary/30;
   }
 
-  /* Chart container */
   .chart-container {
     @apply bg-card rounded-xl p-6 shadow-sm border border-border;
   }
 
-  /* Industrial badge */
   .badge-industrial {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
 
-  /* Gradient text */
   .gradient-text {
     @apply bg-gradient-to-r from-primary to-[hsl(var(--info))] bg-clip-text text-transparent;
   }
 }
 
 @layer utilities {
-  /* Smooth animations */
   .animate-fade-in {
     animation: fadeIn 0.3s ease-out;
   }
@@ -237,7 +212,6 @@
     }
   }
 
-  /* Glass effect */
   .glass {
     @apply bg-white/80 backdrop-blur-sm;
   }

@@ -1,14 +1,12 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { History, FileSpreadsheet, Calendar, Trash2 } from 'lucide-react';
-import { DatasetSummary } from '@/types/equipment';
-import { formatDate, clearHistory } from '@/lib/dataUtils';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import { History, FileSpreadsheet, Calendar, Trash2 } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface UploadHistoryProps {
-  history: DatasetSummary[];
-  onSelectDataset: (summary: DatasetSummary) => void;
-  currentDatasetId?: string;
+  history: any[];
+  onSelectDataset: (dataset: any) => void;
+  currentDatasetId?: number;
   onClearHistory: () => void;
 }
 
@@ -18,9 +16,7 @@ export const UploadHistory: React.FC<UploadHistoryProps> = ({
   currentDatasetId,
   onClearHistory,
 }) => {
-  if (history.length === 0) {
-    return null;
-  }
+  if (!history || history.length === 0) return null;
 
   return (
     <motion.div
@@ -34,6 +30,7 @@ export const UploadHistory: React.FC<UploadHistoryProps> = ({
           <History className="w-5 h-5 text-primary" />
           <h3 className="text-lg font-semibold">Upload History</h3>
         </div>
+
         <Button
           variant="ghost"
           size="sm"
@@ -46,7 +43,7 @@ export const UploadHistory: React.FC<UploadHistoryProps> = ({
       </div>
 
       <div className="space-y-2">
-        {history.map((dataset, index) => (
+        {history.map((dataset: any, index: number) => (
           <motion.button
             key={dataset.id}
             initial={{ opacity: 0, y: 10 }}
@@ -55,29 +52,24 @@ export const UploadHistory: React.FC<UploadHistoryProps> = ({
             onClick={() => onSelectDataset(dataset)}
             className={`w-full p-3 rounded-lg border text-left transition-all ${
               currentDatasetId === dataset.id
-                ? 'border-primary bg-primary/5'
-                : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                ? "border-primary bg-primary/5"
+                : "border-border hover:border-primary/50 hover:bg-muted/50"
             }`}
           >
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-secondary rounded-lg flex-shrink-0">
-                <FileSpreadsheet className="w-4 h-4 text-secondary-foreground" />
+              <div className="p-2 bg-secondary rounded-lg">
+                <FileSpreadsheet className="w-4 h-4" />
               </div>
+
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">{dataset.fileName}</p>
+                <p className="font-medium text-sm truncate">
+                  Dataset #{dataset.id}
+                </p>
+
                 <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                   <Calendar className="w-3 h-3" />
-                  <span>{formatDate(dataset.uploadDate)}</span>
-                </div>
-                <div className="flex items-center gap-3 mt-2 text-xs">
-                  <span className="text-muted-foreground">
-                    <span className="font-medium text-foreground">{dataset.totalCount}</span> items
-                  </span>
-                  <span className="text-muted-foreground">
-                    <span className="font-medium text-foreground">
-                      {Object.keys(dataset.typeDistribution).length}
-                    </span>{' '}
-                    types
+                  <span>
+                    {new Date(dataset.uploaded_at).toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -87,7 +79,7 @@ export const UploadHistory: React.FC<UploadHistoryProps> = ({
       </div>
 
       <p className="text-xs text-muted-foreground mt-4 text-center">
-        Last 5 uploads are stored locally
+        Last 5 uploads are stored in backend
       </p>
     </motion.div>
   );
