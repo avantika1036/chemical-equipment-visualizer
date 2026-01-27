@@ -16,8 +16,12 @@ from reportlab.lib import colors
 from datetime import datetime
 
 from .models import EquipmentDataset
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def generate_pdf(request, dataset_id):
     try:
         dataset = EquipmentDataset.objects.get(id=dataset_id)

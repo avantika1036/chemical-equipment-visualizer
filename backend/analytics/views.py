@@ -2,12 +2,15 @@ import pandas as pd
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
 
 from .models import EquipmentDataset
 from .serializers import CSVUploadSerializer
 
 
 class CSVUploadAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = CSVUploadSerializer
 
     def post(self, request):
@@ -121,6 +124,8 @@ class CSVUploadAPIView(APIView):
 
 
 class DatasetHistoryAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         datasets = EquipmentDataset.objects.order_by("-uploaded_at")[:5]
 
