@@ -136,17 +136,18 @@ class DashboardWindow(QWidget):
         # ---------------- CHART GRID ----------------
         charts_layout = QHBoxLayout()
 
-        self.type_chart = ChartCanvas()
-        self.flow_chart = ChartCanvas()
-        self.pressure_chart = ChartCanvas()
-        self.temp_chart = ChartCanvas()
+        self.chart_type = ChartCanvas(5, 4)
+        self.chart_avg_type = ChartCanvas(5, 4)
+        self.chart_top10 = ChartCanvas(5, 4)
+        self.chart_sorted = ChartCanvas(5, 4)
 
-        charts_layout.addWidget(self.type_chart)
-        charts_layout.addWidget(self.flow_chart)
-        charts_layout.addWidget(self.pressure_chart)
-        charts_layout.addWidget(self.temp_chart)
+        charts_layout.addWidget(self.chart_type)
+        charts_layout.addWidget(self.chart_avg_type)
+        charts_layout.addWidget(self.chart_top10)
+        charts_layout.addWidget(self.chart_sorted)
 
         main_layout.addLayout(charts_layout)
+
 
         self.setLayout(main_layout)
 
@@ -217,35 +218,104 @@ class DashboardWindow(QWidget):
     # DRAW ALL 4 CHARTS
     # ==========================
     def draw_charts(self, data):
+        equipment = data["data"]
 
-        # 1️⃣ TYPE DISTRIBUTION (PIE)
-        self.type_chart.ax.clear()
-        labels = list(data["type_distribution"].keys())
-        values = list(data["type_distribution"].values())
-        self.type_chart.ax.pie(values, labels=labels, autopct="%1.1f%%")
-        self.type_chart.ax.set_title("Equipment Types")
-        self.type_chart.draw()
+        # ===============================
+        # 1️⃣ EQUIPMENT TYPE DISTRIBUTION
+        # ===============================
+        self.chart_type.ax.clear()
+        types = data["type_distribution"]
 
-        # 2️⃣ FLOWRATE BAR
-        self.flow_chart.ax.clear()
-        flows = [r["flowrate"] for r in data["data"]]
-        self.flow_chart.ax.bar(range(len(flows)), flows)
-        self.flow_chart.ax.set_title("Flowrate")
-        self.flow_chart.draw()
+        self.chart_type.ax.pie(
+            types.values(),
+            labels=types.keys(),
+            autopct="%1.1f%%",
+            startangle=90
+        )
+        self.chart_type.ax.set_title("Equipment Type Distribution")
+        self.chart_type.draw()
 
-        # 3️⃣ PRESSURE BAR
-        self.pressure_chart.ax.clear()
-        pressures = [r["pressure"] for r in data["data"]]
-        self.pressure_chart.ax.bar(range(len(pressures)), pressures)
-        self.pressure_chart.ax.set_title("Pressure")
-        self.pressure_chart.draw()
+        # =====================================
+        # 2️⃣ AVERAGE PARAMETERS BY TYPE
+        # =====================================
+        from collections import defaultdict
 
-        # 4️⃣ TEMPERATURE LINE
-        self.temp_chart.ax.clear()
-        temps = [r["temperature"] for r in data["data"]]
-        self.temp_chart.ax.plot(temps, marker="o")
-        self.temp_chart.ax.set_title("Temperature Trend")
-        self.temp_chart.draw()
+        type_groups = defaultdict(list)
+
+        for e in equipment:
+            type_groups[e["type"]].append(e)
+
+        types = []
+        avg_flow = []
+        avg_pressure = []
+        avg_temp = []
+
+        for t, items in type_groups.items():
+            types.append(t)
+            avg_flow.append(sum(i["flowrate"] for i in items) / len(items))
+            avg_pressure.append(sum(i["pressure"] for i in items) / len(items))
+            avg_temp.append(sum(i["temperature"] for i in items) / len(items))
+
+        x = range(len(types))
+
+        self.chart_avg_type.ax.clear()
+        self.chart_avg_type.ax.bar(x, avg_flow, width=0.25, label="Flowrate")
+        self.chart_avg_type.ax.bar(
+            [i + 0.25 for i in x], avg_pressure, width=0.25, label="Pressure"
+        )
+        self.chart_avg_type.ax.bar(
+            [i + 0.5 for i in x], avg_temp, width=0.25, label="Temperature"
+        )
+
+        self.chart_avg_type.ax.set_xticks([i + 0.25 for i in x])
+        self.chart_avg_type.ax.set_xticklabels(types, rotation=30)
+        self.chart_avg_type.ax.set_title("Average Parameters by Type")
+        self.chart_avg_type.ax.legend()
+        self.chart_avg_type.draw()
+
+        # =====================================
+        # 3️⃣ TOP 10 EQUIPMENT PARAMETERS
+        # =====================================
+        top10 = equipment[:10]
+
+        names = [e["equipmentName"] for e in top10]
+        flow = [e["flowrate"] for e in top10]
+        pressure = [e["pressure"] for e in top10]
+        temp = [e["temperature"] for e in top10]
+
+        x = range(len(names))
+
+        self.chart_top10.ax.clear()
+        self.chart_top10.ax.bar(x, flow, width=0.25, label="Flowrate")
+        self.chart_top10.ax.bar(
+            [i + 0.25 for i in x], pressure, width=0.25, label="Pressure"
+        )
+        self.chart_top10.ax.bar(
+            [i + 0.5 for i in x], temp, width=0.25, label="Temperature"
+        )
+
+        self.chart_top10.ax.set_xticks([i + 0.25 for i in x])
+        self.chart_top10.ax.set_xticklabels(names, rotation=30)
+        self.chart_top10.ax.set_title("Top 10 Equipment Parameters")
+        self.chart_top10.ax.legend()
+        self.chart_top10.draw()
+
+        # =====================================
+        # 4️⃣ SORTED PARAMETER DISTRIBUTION
+        # =====================================
+        sorted_eq = sorted(equipment, key=lambda x: x["flowrate"])
+
+        flow_sorted = [e["flowrate"] for e in sorted_eq]
+        pressure_sorted = [e["pressure"] for e in sorted_eq]
+
+        self.chart_sorted.ax.clear()
+        self.chart_sorted.ax.plot(flow_sorted, label="Flowrate", marker="o")
+        self.chart_sorted.ax.plot(pressure_sorted, label="Pressure", marker="o")
+
+        self.chart_sorted.ax.set_title("Parameter Distribution (Sorted by Flowrate)")
+        self.chart_sorted.ax.legend()
+        self.chart_sorted.draw()
+
 
     def download_pdf(self):
         if not hasattr(self, "current_dataset_id"):
