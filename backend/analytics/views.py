@@ -45,14 +45,12 @@ class CSVUploadAPIView(APIView):
                 )
 
         # =====================
-        # 🔥 CRITICAL FIX
-        # Convert to numeric
+        # Convert numeric
         # =====================
         df["Flowrate"] = pd.to_numeric(df["Flowrate"], errors="coerce")
         df["Pressure"] = pd.to_numeric(df["Pressure"], errors="coerce")
         df["Temperature"] = pd.to_numeric(df["Temperature"], errors="coerce")
 
-        # Remove invalid rows
         df = df.dropna(
             subset=["Flowrate", "Pressure", "Temperature"]
         )
@@ -79,17 +77,14 @@ class CSVUploadAPIView(APIView):
         avg_pressure = float(df["Pressure"].mean())
         avg_temperature = float(df["Temperature"].mean())
 
-        type_distribution = (
-            df["Type"]
-            .value_counts()
-            .to_dict()
-        )
+        type_distribution = df["Type"].value_counts().to_dict()
 
         # =====================
         # SAVE DATASET
         # =====================
         dataset = EquipmentDataset.objects.create(
             file=file,
+            original_filename=file.name,   # ✅ CLEAN NAME
             total_equipment=total_equipment,
             avg_flowrate=avg_flowrate,
             avg_pressure=avg_pressure,
@@ -105,12 +100,12 @@ class CSVUploadAPIView(APIView):
                 d.delete()
 
         # =====================
-        # ✅ FRONTEND RESPONSE
+        # FRONTEND RESPONSE
         # =====================
         return Response(
             {
                 "id": dataset.id,
-                "fileName": file.name,
+                "fileName": dataset.original_filename,  # ✅ FIX
                 "uploadDate": dataset.uploaded_at.isoformat(),
 
                 "total_equipment": total_equipment,
@@ -134,10 +129,10 @@ class DatasetHistoryAPIView(APIView):
         for dataset in datasets:
             history.append({
                 "id": dataset.id,
-                "fileName": (
-                    dataset.file.name
-                    if dataset.file else "dataset.csv"
-                ),
+
+                # ✅ THIS IS THE KEY FIX
+                "fileName": dataset.original_filename,
+
                 "uploadDate": dataset.uploaded_at.isoformat(),
 
                 "total_equipment": dataset.total_equipment,

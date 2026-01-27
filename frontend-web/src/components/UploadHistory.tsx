@@ -25,6 +25,7 @@ export const UploadHistory: React.FC<UploadHistoryProps> = ({
       transition={{ duration: 0.4 }}
       className="chart-container"
     >
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <History className="w-5 h-5 text-primary" />
@@ -42,40 +43,68 @@ export const UploadHistory: React.FC<UploadHistoryProps> = ({
         </Button>
       </div>
 
-      <div className="space-y-2">
-        {history.map((dataset: any, index: number) => (
-          <motion.button
-            key={dataset.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: index * 0.05 }}
-            onClick={() => onSelectDataset(dataset)}
-            className={`w-full p-3 rounded-lg border text-left transition-all ${
-              currentDatasetId === dataset.id
-                ? "border-primary bg-primary/5"
-                : "border-border hover:border-primary/50 hover:bg-muted/50"
-            }`}
-          >
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-secondary rounded-lg">
-                <FileSpreadsheet className="w-4 h-4" />
-              </div>
+      {/* History cards */}
+      <div className="space-y-3">
+        {history.map((dataset, index) => {
+          const typeCount = Object.keys(
+            dataset.type_distribution || {}
+          ).length;
 
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">
-                  Dataset #{dataset.id}
-                </p>
+          return (
+            <motion.button
+              key={dataset.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, delay: index * 0.05 }}
+              onClick={() => onSelectDataset(dataset)}
+              className={`w-full text-left rounded-xl border p-4 transition-all ${
+                currentDatasetId === dataset.id
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/50 hover:bg-muted/40"
+              }`}
+            >
+              <div className="flex gap-4">
+                {/* Icon */}
+                <div className="p-3 bg-secondary rounded-lg">
+                  <FileSpreadsheet className="w-5 h-5" />
+                </div>
 
-                <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                  <Calendar className="w-3 h-3" />
-                  <span>
-                    {new Date(dataset.uploaded_at).toLocaleString()}
-                  </span>
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  {/* ✅ FILE NAME */}
+                  <p className="font-semibold text-sm truncate">
+                    {dataset.fileName}
+                  </p>
+
+                  {/* Date */}
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                    <Calendar className="w-3 h-3" />
+                    <span>
+                      {new Date(dataset.uploadDate).toLocaleString()}
+                    </span>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="flex gap-6 mt-3 text-sm">
+                    <span>
+                      <b>{dataset.total_equipment}</b>{" "}
+                      <span className="text-muted-foreground">
+                        items
+                      </span>
+                    </span>
+
+                    <span>
+                      <b>{typeCount}</b>{" "}
+                      <span className="text-muted-foreground">
+                        types
+                      </span>
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.button>
-        ))}
+            </motion.button>
+          );
+        })}
       </div>
 
       <p className="text-xs text-muted-foreground mt-4 text-center">
