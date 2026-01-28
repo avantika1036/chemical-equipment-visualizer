@@ -1,3 +1,7 @@
+import Home from "./pages/Home";
+import Index from "./pages/Index";
+import Auth from "./pages/Auth";
+import NotFound from "./pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,15 +15,13 @@ import {
 
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import NotFound from "./pages/NotFound";
-
 const queryClient = new QueryClient();
 
 /* ===============================
    ROUTES
 ================================ */
+
+// Update src/App.tsx - change the AppRoutes function:
 
 const AppRoutes = () => {
   const { user, loading, signIn, signUp } = useAuth();
@@ -28,12 +30,18 @@ const AppRoutes = () => {
 
   return (
     <Routes>
+      {/* HOME */}
+      <Route
+        path="/"
+        element={<Home />}
+      />
+
       {/* AUTH */}
       <Route
         path="/auth"
         element={
           user ? (
-            <Navigate to="/" replace />
+            <Navigate to="/dashboard" replace />
           ) : (
             <Auth
               signIn={signIn}
@@ -45,7 +53,7 @@ const AppRoutes = () => {
 
       {/* DASHBOARD */}
       <Route
-        path="/"
+        path="/dashboard"
         element={
           user ? (
             <Index />

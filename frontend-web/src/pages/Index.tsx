@@ -112,10 +112,10 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-neutral-lightest">
       <Header />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-8 py-8">
         <AnimatePresence mode="wait">
           {!currentDataset ? (
             /* ================= UPLOAD ================= */
@@ -127,8 +127,8 @@ const Index = () => {
               className="grid grid-cols-1 lg:grid-cols-3 gap-8"
             >
               <div className="lg:col-span-2">
-                <h2 className="text-2xl font-bold mb-2">
-                  Upload Equipment Data
+                <h2 className="text-4xl font-bold mb-6 text-primary">
+                  📊 Upload Equipment Data
                 </h2>
 
                 <CSVUpload
@@ -152,13 +152,13 @@ const Index = () => {
               exit={{ opacity: 0 }}
             >
               {/* HEADER */}
-              <div className="flex justify-between mb-6">
+              <div className="flex justify-between items-start mb-8">
                 <div>
-                  <h2 className="text-xl font-bold flex gap-2">
-                    <FileSpreadsheet className="w-5 h-5 text-primary" />
+                  <h2 className="text-3xl font-bold flex items-center gap-3 text-primary mb-2">
+                    <FileSpreadsheet className="w-8 h-8" />
                     {currentDataset.fileName}
                   </h2>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-base text-neutral-medium font-medium">
                     Uploaded{" "}
                     {new Date(
                       currentDataset.uploadDate
@@ -166,34 +166,36 @@ const Index = () => {
                   </p>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <Button
-                  onClick={async () => {
-                    try {
-                      const response = await api.get(`pdf/${currentDataset.id}/`, {
-                        responseType: 'blob'
-                      });
-                      const url = window.URL.createObjectURL(response.data);
-                      const link = document.createElement('a');
-                      link.href = url;
-                      link.download = `${currentDataset.fileName.replace('.csv', '')}_report.pdf`;
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                      window.URL.revokeObjectURL(url);
-                    } catch (error) {
-                      console.error('Failed to download PDF:', error);
-                    }
-                  }}
-                >
-                  <FileDown className="w-4 h-4 mr-2" />
-                  Download PDF Report
-                </Button>
+                    onClick={async () => {
+                      try {
+                        const response = await api.get(`pdf/${currentDataset.id}/`, {
+                          responseType: 'blob'
+                        });
+                        const url = window.URL.createObjectURL(response.data);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `${currentDataset.fileName.replace('.csv', '')}_report.pdf`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                      } catch (error) {
+                        console.error('Failed to download PDF:', error);
+                      }
+                    }}
+                    className="gradient-button-accent hover:shadow-glow-accent text-lg font-bold px-6 py-6 rounded-xl"
+                  >
+                    <FileDown className="w-5 h-5 mr-2" />
+                    Download PDF Report
+                  </Button>
                   <Button
                     onClick={handleNewUpload}
                     variant="outline"
+                    className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-lg font-bold px-6 py-6 rounded-xl transition-all"
                   >
-                    <RefreshCw className="w-4 h-4 mr-2" />
+                    <RefreshCw className="w-5 h-5 mr-2" />
                     Upload New File
                   </Button>
                 </div>
@@ -203,13 +205,19 @@ const Index = () => {
               <StatsPanel summary={currentDataset} />
 
               {/* TABS */}
-              <Tabs defaultValue="charts" className="mt-8">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="charts">
-                    Charts & Analytics
+              <Tabs defaultValue="charts" className="mt-10">
+                <TabsList className="mb-8 bg-white border-2 border-neutral-light p-1.5 rounded-2xl shadow-card h-auto w-full grid grid-cols-2 gap-2">
+                  <TabsTrigger 
+                    value="charts"
+                    className="text-lg font-bold px-8 py-5 data-[state=active]:gradient-header data-[state=active]:text-white data-[state=inactive]:text-neutral-dark rounded-xl transition-all hover:bg-neutral-lightest"
+                  >
+                    📊 Charts & Analytics
                   </TabsTrigger>
-                  <TabsTrigger value="table">
-                    Data Table
+                  <TabsTrigger 
+                    value="table"
+                    className="text-lg font-bold px-8 py-5 data-[state=active]:gradient-header data-[state=active]:text-white data-[state=inactive]:text-neutral-dark rounded-xl transition-all hover:bg-neutral-lightest"
+                  >
+                    📋 Data Table
                   </TabsTrigger>
                 </TabsList>
 
@@ -223,7 +231,7 @@ const Index = () => {
               </Tabs>
 
               {history.length > 1 && (
-                <div className="mt-8">
+                <div className="mt-10">
                   <UploadHistory
                     history={history}
                     onSelectDataset={handleSelectDataset}
