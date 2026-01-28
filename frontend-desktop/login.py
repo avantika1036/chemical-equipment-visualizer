@@ -109,7 +109,7 @@ class LoginWindow(QWidget):
                 background-color: {NEUTRAL_LIGHTEST};
                 border: 3px solid {NEUTRAL_LIGHT};
                 border-radius: 16px;
-                padding: 20px 30px;
+                padding: 18px 30px;
                 font-size: 26px;
                 color: {NEUTRAL_DARKEST};
             }}
