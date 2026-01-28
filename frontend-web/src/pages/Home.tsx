@@ -275,7 +275,7 @@ const Home: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl gradient-button-secondary flex items-center justify-center shadow-glow-secondary">
                   <Beaker className="text-white w-6 h-6" />
                 </div>
-                <span className="text-3xl font-black tracking-tighter uppercase">Chemical Equipment Visualizer</span>
+                <span className="text-2xl font-black tracking-tighter uppercase">Chemical Equipment Visualizer</span>
               </div>
               <p className="text-white/70 text-base font-medium max-w-sm leading-relaxed">
                 Professional Visual Analytics for Chemical Engineering Assets. Optimized for precision and performance.
