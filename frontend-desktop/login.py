@@ -3,10 +3,9 @@ from PyQt5.QtWidgets import (
     QWidget, QLabel, QLineEdit, QPushButton,
     QVBoxLayout, QHBoxLayout, QMessageBox, QFrame, QGraphicsDropShadowEffect
 )
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt, QPropertyAnimation, QEasingCurve
+from PyQt5.QtGui import QFont, QColor
 
-from dashboard import DashboardWindow
 from styles import *
 
 
@@ -15,7 +14,7 @@ class LoginWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle("Chemical Equipment Visualizer - Login")
-        self.setFixedSize(800, 1000)
+        self.setFixedSize(1100, 1200)  # Even larger!
 
         # login / signup mode
         self.is_login = True
@@ -24,43 +23,44 @@ class LoginWindow(QWidget):
         self.setStyleSheet(LOGIN_CONTAINER_STYLE)
 
     # ==========================
-    # UI
+    # UI (MUCH LARGER & MORE READABLE)
     # ==========================
     def init_ui(self):
         # Main container with gradient background
         main_layout = QVBoxLayout()
-        main_layout.setContentsMargins(20, 20, 20, 20)
+        main_layout.setContentsMargins(40, 40, 40, 40)
         main_layout.setAlignment(Qt.AlignCenter)
 
-        # Central card
+        # Central card - MUCH LARGER
         card = QFrame()
         card.setStyleSheet(LOGIN_CARD_STYLE)
-        card.setFixedWidth(600)
+        card.setFixedWidth(850)  # Wider card
         
-        # Add shadow effect
+        # Enhanced shadow effect
         shadow = QGraphicsDropShadowEffect()
-        shadow.setBlurRadius(30)
-        shadow.setColor(Qt.black)
-        shadow.setOffset(0, 10)
+        shadow.setBlurRadius(50)
+        shadow.setColor(QColor(0, 0, 0, 120))
+        shadow.setOffset(0, 18)
         card.setGraphicsEffect(shadow)
 
         card_layout = QVBoxLayout()
-        card_layout.setSpacing(25)
-        card_layout.setContentsMargins(25, 25, 25, 25)
+        card_layout.setSpacing(32)
+        card_layout.setContentsMargins(60, 60, 60, 60)
 
-        # App icon/logo placeholder
+        # App icon/logo - MUCH LARGER
         logo_label = QLabel("🧪")
         logo_label.setAlignment(Qt.AlignCenter)
-        logo_label.setStyleSheet("font-size: 90px;")
+        logo_label.setStyleSheet("font-size: 120px;")  # HUGE!
 
-        # Title
+        # Title - MUCH LARGER
         title = QLabel("Chemical Equipment")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet(f"""
             QLabel {{
                 color: {PRIMARY_MAIN};
-                font-size: 45px;
+                font-size: 56px;
                 font-weight: 700;
+                letter-spacing: -0.5px;
             }}
         """)
 
@@ -69,108 +69,133 @@ class LoginWindow(QWidget):
         subtitle_main.setStyleSheet(f"""
             QLabel {{
                 color: {SECONDARY_MAIN};
-                font-size: 40px;
+                font-size: 50px;
                 font-weight: 700;
+                letter-spacing: -0.3px;
             }}
         """)
 
-        # Login/Signup label
-        self.mode_label = QLabel("Login to your account")
+        # Tagline - LARGER
+        tagline = QLabel("Analyze • Visualize • Optimize")
+        tagline.setAlignment(Qt.AlignCenter)
+        tagline.setStyleSheet(f"""
+            QLabel {{
+                color: {NEUTRAL_MEDIUM};
+                font-size: 24px;
+                font-weight: 500;
+                font-style: italic;
+                letter-spacing: 1.2px;
+            }}
+        """)
+
+        # Login/Signup label - LARGER
+        self.mode_label = QLabel("Sign in to your account")
         self.mode_label.setAlignment(Qt.AlignCenter)
         self.mode_label.setStyleSheet(f"""
             QLabel {{
-                color: {NEUTRAL_MEDIUM};
-                font-size: 30px;
-                font-weight: 500;
+                color: {NEUTRAL_DARK};
+                font-size: 32px;
+                font-weight: 600;
+                padding: 12px;
             }}
         """)
 
-        # Input fields
+        # Input fields - MUCH LARGER
         self.email_input = QLineEdit()
         self.email_input.setPlaceholderText("📧 Email Address")
-        self.email_input.setMinimumHeight(60)
+        self.email_input.setMinimumHeight(75)  # TALLER!
         self.email_input.setStyleSheet(f"""
             QLineEdit {{
                 background-color: {NEUTRAL_LIGHTEST};
-                border: 2px solid {NEUTRAL_LIGHT};
-                border-radius: 12px;
-                padding: 16px 24px;
-                font-size: 28px;
+                border: 3px solid {NEUTRAL_LIGHT};
+                border-radius: 16px;
+                padding: 20px 30px;
+                font-size: 26px;
                 color: {NEUTRAL_DARKEST};
             }}
             QLineEdit:focus {{
-                border: 2px solid {PRIMARY_MAIN};
+                border: 3px solid {PRIMARY_MAIN};
                 background-color: white;
+                outline: none;
             }}
             QLineEdit:hover {{
-                border: 2px solid {PRIMARY_LIGHT};
+                border: 3px solid {PRIMARY_LIGHT};
+                background-color: white;
             }}
         """)
 
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("🔒 Password")
         self.password_input.setEchoMode(QLineEdit.Password)
-        self.password_input.setMinimumHeight(60)
+        self.password_input.setMinimumHeight(75)  # TALLER!
         self.password_input.setStyleSheet(f"""
             QLineEdit {{
                 background-color: {NEUTRAL_LIGHTEST};
-                border: 2px solid {NEUTRAL_LIGHT};
-                border-radius: 12px;
-                padding: 16px 24px;
-                font-size: 28px;
+                border: 3px solid {NEUTRAL_LIGHT};
+                border-radius: 16px;
+                padding: 20px 30px;
+                font-size: 26px;
                 color: {NEUTRAL_DARKEST};
             }}
             QLineEdit:focus {{
-                border: 2px solid {PRIMARY_MAIN};
+                border: 3px solid {PRIMARY_MAIN};
                 background-color: white;
+                outline: none;
             }}
             QLineEdit:hover {{
-                border: 2px solid {PRIMARY_LIGHT};
+                border: 3px solid {PRIMARY_LIGHT};
+                background-color: white;
             }}
         """)
 
-        # Submit button
-        self.submit_btn = QPushButton("LOGIN")
-        self.submit_btn.setMinimumHeight(65)
+        # Submit button - MUCH LARGER
+        self.submit_btn = QPushButton("SIGN IN")
+        self.submit_btn.setMinimumHeight(80)  # TALLER!
         self.submit_btn.setCursor(Qt.PointingHandCursor)
         self.submit_btn.setStyleSheet(f"""
             QPushButton {{
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:0,
                     stop:0 {PRIMARY_MAIN},
-                    stop:1 {PRIMARY_LIGHT}
+                    stop:0.5 {PRIMARY_LIGHT},
+                    stop:1 {SECONDARY_MAIN}
                 );
                 color: white;
                 border: none;
-                border-radius: 14px;
-                padding: 18px 28px;
+                border-radius: 18px;
+                padding: 24px 36px;
                 font-size: 28px;
                 font-weight: 700;
+                letter-spacing: 2px;
             }}
             QPushButton:hover {{
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:0,
                     stop:0 {PRIMARY_LIGHT},
+                    stop:0.5 {PRIMARY_GLOW},
                     stop:1 {SECONDARY_LIGHT}
                 );
+                padding: 25px 36px;
             }}
             QPushButton:pressed {{
                 background-color: {PRIMARY_DARK};
+                padding: 23px 36px;
             }}
         """)
         self.submit_btn.clicked.connect(self.handle_submit)
 
-        # Toggle button
-        self.toggle_btn = QPushButton("Don't have an account? Create one")
+        # Toggle button - LARGER
+        self.toggle_btn = QPushButton("Don't have an account? Sign up")
         self.toggle_btn.setCursor(Qt.PointingHandCursor)
         self.toggle_btn.setStyleSheet(f"""
             QPushButton {{
                 background-color: transparent;
                 color: {SECONDARY_MAIN};
                 border: none;
-                font-size: 28px;
+                font-size: 26px;
                 font-weight: 600;
                 text-decoration: underline;
+                padding: 12px;
             }}
             QPushButton:hover {{
                 color: {SECONDARY_LIGHT};
@@ -178,19 +203,33 @@ class LoginWindow(QWidget):
         """)
         self.toggle_btn.clicked.connect(self.toggle_mode)
 
+        # Decorative divider
+        divider = QFrame()
+        divider.setFrameShape(QFrame.HLine)
+        divider.setStyleSheet(f"""
+            QFrame {{
+                background-color: {NEUTRAL_LIGHT};
+                border: none;
+                height: 2px;
+                margin: 12px 0px;
+            }}
+        """)
+
         # Add all widgets to card layout
         card_layout.addWidget(logo_label)
         card_layout.addWidget(title)
         card_layout.addWidget(subtitle_main)
-        card_layout.addSpacing(10)
-        card_layout.addWidget(self.mode_label)
+        card_layout.addWidget(tagline)
         card_layout.addSpacing(20)
+        card_layout.addWidget(self.mode_label)
+        card_layout.addSpacing(25)
         card_layout.addWidget(self.email_input)
         card_layout.addWidget(self.password_input)
-        card_layout.addSpacing(10)
+        card_layout.addSpacing(20)
         card_layout.addWidget(self.submit_btn)
-        card_layout.addSpacing(10)
+        card_layout.addWidget(divider)
         card_layout.addWidget(self.toggle_btn)
+        card_layout.addSpacing(15)
 
         card.setLayout(card_layout)
         main_layout.addWidget(card)
@@ -204,13 +243,13 @@ class LoginWindow(QWidget):
         self.is_login = not self.is_login
 
         if self.is_login:
-            self.mode_label.setText("Login to your account")
-            self.submit_btn.setText("LOGIN")
-            self.toggle_btn.setText("Don't have an account? Create one")
+            self.mode_label.setText("Sign in to access your datasets")
+            self.submit_btn.setText("SIGN IN")
+            self.toggle_btn.setText("Don't have an account? Sign up")
         else:
-            self.mode_label.setText("Create your account")
+            self.mode_label.setText("Create an account to get started")
             self.submit_btn.setText("CREATE ACCOUNT")
-            self.toggle_btn.setText("Already have an account? Login")
+            self.toggle_btn.setText("Already have an account? Sign in")
 
     # ==========================
     # SUBMIT
@@ -292,16 +331,17 @@ class LoginWindow(QWidget):
 
         self.show_message(
             "Success",
-            f"Welcome, {email}!",
+            f"Welcome, {email}! 🎉",
             QMessageBox.Information
         )
 
+        from dashboard import DashboardWindow
         self.dashboard = DashboardWindow(token, email)
         self.dashboard.show()
         self.close()
 
     # ==========================
-    # CUSTOM MESSAGE BOX
+    # CUSTOM MESSAGE BOX (LARGER TEXT)
     # ==========================
     def show_message(self, title, message, icon):
         msg = QMessageBox(self)
@@ -311,23 +351,35 @@ class LoginWindow(QWidget):
         msg.setStyleSheet(f"""
             QMessageBox {{
                 background-color: white;
+                border-radius: 14px;
             }}
             QMessageBox QLabel {{
-                color: {NEUTRAL_DARKEST};
+                color: white;
+                font-weight: 600;
                 font-size: 24px;
-                min-width: 350px;
+                min-width: 450px;
+                padding: 24px;
             }}
             QPushButton {{
-                background-color: {PRIMARY_MAIN};
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {PRIMARY_MAIN},
+                    stop:1 {PRIMARY_LIGHT}
+                );
                 color: white;
                 border: none;
-                border-radius: 6px;
-                padding: 10px 24px;
-                font-size: 23px;
-                min-width: 90px;
+                border-radius: 12px;
+                padding: 14px 32px;
+                font-size: 24px;
+                font-weight: 700;
+                min-width: 120px;
             }}
             QPushButton:hover {{
-                background-color: {PRIMARY_LIGHT};
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {PRIMARY_LIGHT},
+                    stop:1 {PRIMARY_GLOW}
+                );
             }}
         """)
         msg.exec_()

@@ -4,11 +4,11 @@ from PyQt5.QtWidgets import (
     QFrame, QListWidget,
     QMessageBox, QFileDialog,
     QTableWidget, QTableWidgetItem,
-    QScrollArea, QGraphicsDropShadowEffect, QSizePolicy
+    QScrollArea, QGraphicsDropShadowEffect, QSizePolicy, QHeaderView
 )
 
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, pyqtProperty
+from PyQt5.QtGui import QFont, QColor
 import requests
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -19,18 +19,24 @@ from styles import *
 
 
 # ==========================
-# MATPLOTLIB CANVAS
+# MATPLOTLIB CANVAS (MUCH LARGER & MORE VISIBLE)
 # ==========================
 class ChartCanvas(FigureCanvasQTAgg):
-    def __init__(self, width=6.2, height=4.5):
-        fig = Figure(figsize=(width, height), facecolor='white', dpi=105)
+    def __init__(self, width=10, height=7):
+        fig = Figure(figsize=(width, height), facecolor='white', dpi=100)
         self.ax = fig.add_subplot(111)
         self.ax.set_facecolor('#FAFBFC')
         super().__init__(fig)
         
-        # Style the figure with more padding
-        fig.tight_layout(pad=3.2)
-        self.setMinimumSize(500, 380)
+        # Store figure reference for later layout adjustments
+        self.fig = fig
+        self.setMinimumSize(700, 550)
+        
+        # Set size policy to expand
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        
+        # Update size on draw
+        self.updateGeometry()
 
 
 class DashboardWindow(QWidget):
@@ -49,17 +55,35 @@ class DashboardWindow(QWidget):
         self.load_history()
     
     def update_table(self, rows):
+        """Update table with enhanced formatting"""
         self.table.setRowCount(len(rows))
 
         for row_index, row in enumerate(rows):
-            self.table.setItem(row_index, 0, QTableWidgetItem(str(row["equipmentName"])))
-            self.table.setItem(row_index, 1, QTableWidgetItem(str(row["type"])))
-            self.table.setItem(row_index, 2, QTableWidgetItem(str(row["flowrate"])))
-            self.table.setItem(row_index, 3, QTableWidgetItem(str(row["pressure"])))
-            self.table.setItem(row_index, 4, QTableWidgetItem(str(row["temperature"])))
+            # Create items with centered alignment
+            name_item = QTableWidgetItem(str(row["equipmentName"]))
+            type_item = QTableWidgetItem(str(row["type"]))
+            flow_item = QTableWidgetItem(f"{row['flowrate']:.2f}")
+            press_item = QTableWidgetItem(f"{row['pressure']:.2f}")
+            temp_item = QTableWidgetItem(f"{row['temperature']:.2f}")
+            
+            # Center align numeric values
+            flow_item.setTextAlignment(Qt.AlignCenter)
+            press_item.setTextAlignment(Qt.AlignCenter)
+            temp_item.setTextAlignment(Qt.AlignCenter)
+            
+            self.table.setItem(row_index, 0, name_item)
+            self.table.setItem(row_index, 1, type_item)
+            self.table.setItem(row_index, 2, flow_item)
+            self.table.setItem(row_index, 3, press_item)
+            self.table.setItem(row_index, 4, temp_item)
+        
+        # Force table to use full width
+        self.table.horizontalHeader().setStretchLastSection(True)
+        for i in range(self.table.columnCount()):
+            self.table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
 
     # ==========================
-    # UI
+    # UI (DRAMATICALLY ENHANCED WITH LARGER SIZES)
     # ==========================
     def init_ui(self):
         # Main horizontal layout: SIDEBAR + MAIN CONTENT
@@ -67,92 +91,111 @@ class DashboardWindow(QWidget):
         main_layout.setSpacing(0)
         main_layout.setContentsMargins(0, 0, 0, 0)
 
-        # ==================== LEFT SIDEBAR ====================
+        # ==================== LEFT SIDEBAR (LARGER) ====================
         sidebar = QFrame()
-        sidebar.setStyleSheet(f"""
-            QFrame {{
-                background-color: {NEUTRAL_DARK};
-                border: none;
-            }}
-        """)
-        sidebar.setFixedWidth(360)
+        sidebar.setStyleSheet(SIDEBAR_STYLE)
+        sidebar.setFixedWidth(490)
         
         sidebar_layout = QVBoxLayout()
-        sidebar_layout.setSpacing(20)
-        sidebar_layout.setContentsMargins(24, 30, 24, 30)
+        sidebar_layout.setSpacing(22)
+        sidebar_layout.setContentsMargins(30, 40, 30, 40)
 
-        # Sidebar Title
+        # Sidebar Title with Icon (LARGER)
         sidebar_title = QLabel("📊 Control Panel")
         sidebar_title.setStyleSheet(f"""
             QLabel {{
                 color: white;
-                font-size: 30px;
+                font-size: 34px;
                 font-weight: 700;
-                padding: 20px 14px;
-                background-color: {PRIMARY_MAIN};
-                border-radius: 12px;
+                padding: 28px 20px;
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {PRIMARY_MAIN},
+                    stop:1 {PRIMARY_LIGHT}
+                );
+                border-radius: 16px;
+                letter-spacing: 0.5px;
             }}
         """)
         sidebar_title.setAlignment(Qt.AlignCenter)
 
-        # Upload Button
+        # Upload Button (MUCH LARGER)
         upload_btn = QPushButton("📤 Upload CSV")
-        upload_btn.setMinimumHeight(75)
+        upload_btn.setMinimumHeight(80)
         upload_btn.setCursor(Qt.PointingHandCursor)
         upload_btn.setStyleSheet(f"""
             QPushButton {{
-                background-color: {SECONDARY_MAIN};
+                background: qlineargradient(
+                    x1:0, y1:0, x2:0, y2:1,
+                    stop:0 {SECONDARY_LIGHT},
+                    stop:1 {SECONDARY_MAIN}
+                );
                 color: white;
                 border: none;
-                border-radius: 14px;
-                padding: 22px 26px;
-                font-size: 24px;
+                border-radius: 16px;
+                padding: 24px 30px;
+                font-size: 26px;
                 font-weight: 700;
-                letter-spacing: 0.5px;
+                letter-spacing: 1px;
             }}
             QPushButton:hover {{
-                background-color: {SECONDARY_LIGHT};
-                transform: scale(1.02);
+                background: qlineargradient(
+                    x1:0, y1:0, x2:0, y2:1,
+                    stop:0 {SECONDARY_GLOW},
+                    stop:1 {SECONDARY_LIGHT}
+                );
+                padding: 25px 30px;
             }}
             QPushButton:pressed {{
                 background-color: {SECONDARY_DARK};
+                padding: 23px 30px;
             }}
         """)
         upload_btn.clicked.connect(self.upload_csv)
 
-        # PDF Button
+        # PDF Button (MUCH LARGER)
         pdf_btn = QPushButton("📄 Download PDF")
-        pdf_btn.setMinimumHeight(75)
+        pdf_btn.setMinimumHeight(80)
         pdf_btn.setCursor(Qt.PointingHandCursor)
         pdf_btn.setStyleSheet(f"""
             QPushButton {{
-                background-color: {ACCENT_MAIN};
+                background: qlineargradient(
+                    x1:0, y1:0, x2:0, y2:1,
+                    stop:0 {ACCENT_LIGHT},
+                    stop:1 {ACCENT_MAIN}
+                );
                 color: white;
                 border: none;
-                border-radius: 14px;
-                padding: 22px 26px;
-                font-size: 24px;
+                border-radius: 16px;
+                padding: 24px 30px;
+                font-size: 26px;
                 font-weight: 700;
-                letter-spacing: 0.5px;
+                letter-spacing: 1px;
             }}
             QPushButton:hover {{
-                background-color: {ACCENT_LIGHT};
-                transform: scale(1.02);
+                background: qlineargradient(
+                    x1:0, y1:0, x2:0, y2:1,
+                    stop:0 {ACCENT_GLOW},
+                    stop:1 {ACCENT_LIGHT}
+                );
+                padding: 25px 30px;
             }}
             QPushButton:pressed {{
                 background-color: {ACCENT_DARK};
+                padding: 23px 30px;
             }}
         """)
         pdf_btn.clicked.connect(self.download_pdf)
 
-        # Summary Section
-        summary_header = QLabel("📈 Summary")
+        # Summary Section (LARGER TEXT)
+        summary_header = QLabel("📈 Summary Statistics")
         summary_header.setStyleSheet(f"""
             QLabel {{
                 color: white;
-                font-size: 26px;
+                font-size: 32px;
                 font-weight: 700;
-                padding: 14px 10px;
+                padding: 18px 14px;
+                letter-spacing: 0.5px;
             }}
         """)
 
@@ -161,319 +204,361 @@ class DashboardWindow(QWidget):
         self.stats_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.stats_label.setStyleSheet(f"""
             QLabel {{
-                padding: 24px;
-                background-color: {NEUTRAL_DARKEST};
-                border: 2px solid {SECONDARY_MAIN};
-                border-radius: 12px;
-                font-size: 21px;
+                padding: 32px;
+                background: qlineargradient(
+                    x1:0, y1:0, x2:0, y2:1,
+                    stop:0 {NEUTRAL_DARKEST},
+                    stop:1 {NEUTRAL_DARK}
+                );
+                border: 3px solid {SECONDARY_MAIN};
+                border-radius: 16px;
+                font-size: 24px;
                 color: white;
-                line-height: 2.4;
+                line-height: 2.2;
             }}
         """)
-        self.stats_label.setMinimumHeight(210)
+        self.stats_label.setMinimumHeight(240)
 
-        # History Section
+        # History Section (LARGER TEXT)
         history_header = QLabel("📜 Upload History")
         history_header.setStyleSheet(f"""
             QLabel {{
                 color: white;
-                font-size: 26px;
+                font-size: 28px;
                 font-weight: 700;
-                padding: 14px 10px;
+                padding: 18px 14px;
+                letter-spacing: 0.5px;
             }}
         """)
 
         self.history_list = QListWidget()
         self.history_list.setStyleSheet(f"""
             QListWidget {{
-                background-color: {NEUTRAL_DARKEST};
-                border: 2px solid {PRIMARY_MAIN};
-                border-radius: 10px;
-                padding: 12px;
-                font-size: 18px;
+                background: qlineargradient(
+                    x1:0, y1:0, x2:0, y2:1,
+                    stop:0 {NEUTRAL_DARKEST},
+                    stop:1 {NEUTRAL_DARK}
+                );
+                border: 3px solid {PRIMARY_LIGHT};
+                border-radius: 14px;
+                padding: 16px;
+                font-size: 22px;
                 color: white;
+                outline: none;
             }}
             QListWidget::item {{
-                padding: 18px;
-                border-radius: 8px;
-                margin: 6px 0px;
-                background-color: {NEUTRAL_DARK};
-                border: 1px solid {NEUTRAL_MEDIUM};
+                padding: 22px 16px;
+                border-radius: 12px;
+                margin: 8px 0px;
+                background-color: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
             }}
             QListWidget::item:selected {{
-                background-color: {SECONDARY_MAIN};
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {PRIMARY_MAIN},
+                    stop:1 {PRIMARY_LIGHT}
+                );
                 color: white;
-                border: 2px solid {SECONDARY_LIGHT};
+                border: 2px solid {PRIMARY_GLOW};
             }}
             QListWidget::item:hover {{
-                background-color: {PRIMARY_MAIN};
-                color: white;
-                border: 2px solid {PRIMARY_LIGHT};
+                background-color: rgba(255, 255, 255, 0.12);
+                border: 1px solid {PRIMARY_LIGHT};
             }}
         """)
         self.history_list.itemClicked.connect(self.load_selected_dataset)
 
-        # Add all to sidebar
+        # Add widgets to sidebar
         sidebar_layout.addWidget(sidebar_title)
+        sidebar_layout.addSpacing(15)
         sidebar_layout.addWidget(upload_btn)
         sidebar_layout.addWidget(pdf_btn)
+        sidebar_layout.addSpacing(25)
         sidebar_layout.addWidget(summary_header)
         sidebar_layout.addWidget(self.stats_label)
+        sidebar_layout.addSpacing(25)
         sidebar_layout.addWidget(history_header)
-        sidebar_layout.addWidget(self.history_list)
-
+        sidebar_layout.addWidget(self.history_list, 1)
+        
         sidebar.setLayout(sidebar_layout)
 
-        # ==================== MAIN CONTENT AREA ====================
-        content_area = QFrame()
-        content_area.setStyleSheet(f"""
-            QFrame {{
-                background-color: {NEUTRAL_LIGHTEST};
+        # ==================== RIGHT CONTENT AREA (FULL WIDTH) ====================
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll_area.setStyleSheet(f"""
+            QScrollArea {{
                 border: none;
+                background-color: {NEUTRAL_LIGHTEST};
             }}
         """)
+
+        content_widget = QWidget()
+        content_widget.setStyleSheet(f"background-color: {NEUTRAL_LIGHTEST};")
         
         content_layout = QVBoxLayout()
-        content_layout.setSpacing(20)
-        content_layout.setContentsMargins(30, 30, 30, 30)
+        content_layout.setSpacing(30)
+        content_layout.setContentsMargins(35, 30, 35, 30)
 
-        # Header
-        header_frame = QFrame()
-        header_frame.setStyleSheet(f"""
+        # Top Bar (LARGER TEXT)
+        top_bar = QFrame()
+        top_bar.setStyleSheet(f"""
             QFrame {{
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:0,
                     stop:0 {PRIMARY_MAIN},
+                    stop:0.5 {PRIMARY_LIGHT},
                     stop:1 {SECONDARY_MAIN}
                 );
-                border-radius: 16px;
+                border-radius: 18px;
+                padding: 24px 35px;
+                border: none;
             }}
         """)
-        header_frame.setMaximumHeight(100)
         
-        header_layout = QHBoxLayout()
-        header_layout.setContentsMargins(30, 20, 30, 20)
+        # Add shadow to top bar
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(25)
+        shadow.setColor(QColor(0, 0, 0, 70))
+        shadow.setOffset(0, 6)
+        top_bar.setGraphicsEffect(shadow)
+        
+        top_bar_layout = QHBoxLayout()
+        top_bar_layout.setContentsMargins(0, 0, 0, 0)
 
-        header_title = QLabel("🧪 Chemical Equipment Visualizer")
-        header_title.setStyleSheet("""
-            QLabel {
+        # Title with icon (MUCH LARGER)
+        title_label = QLabel("🧪 Chemical Equipment Visualizer")
+        title_label.setStyleSheet(f"""
+            QLabel {{
                 color: white;
-                font-size: 42px;
+                font-size: 38px;
                 font-weight: 700;
-                letter-spacing: 0.5px;
-            }
+                letter-spacing: -0.3px;
+            }}
         """)
 
+        # User info (LARGER)
         user_label = QLabel(f"👤 {self.email}")
         user_label.setStyleSheet(f"""
             QLabel {{
                 color: white;
-                font-size: 21px;
+                font-size: 24px;
                 font-weight: 600;
-                padding: 16px 30px;
+                padding: 14px 28px;
                 background-color: rgba(255, 255, 255, 0.2);
-                border-radius: 26px;
+                border: 2px solid rgba(255, 255, 255, 0.4);
+                border-radius: 28px;
+                backdrop-filter: blur(10px);
             }}
         """)
 
+        # Logout button (LARGER)
         logout_btn = QPushButton("🚪 Sign Out")
-        logout_btn.setMinimumHeight(58)
         logout_btn.setCursor(Qt.PointingHandCursor)
         logout_btn.setStyleSheet(f"""
             QPushButton {{
-                background-color: {ALERT_MAIN};
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {ALERT_MAIN},
+                    stop:1 {ALERT_LIGHT}
+                );
                 color: white;
                 border: none;
                 border-radius: 14px;
-                padding: 18px 38px;
-                font-size: 21px;
+                padding: 14px 32px;
+                font-size: 24px;
                 font-weight: 700;
+                letter-spacing: 0.5px;
             }}
             QPushButton:hover {{
-                background-color: {ALERT_LIGHT};
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {ALERT_LIGHT},
+                    stop:1 #FF8A9A
+                );
+                padding: 15px 32px;
             }}
             QPushButton:pressed {{
                 background-color: {ALERT_DARK};
+                padding: 13px 32px;
             }}
         """)
         logout_btn.clicked.connect(self.logout)
 
-        header_layout.addWidget(header_title)
-        header_layout.addStretch()
-        header_layout.addWidget(user_label)
-        header_layout.addWidget(logout_btn)
+        top_bar_layout.addWidget(title_label)
+        top_bar_layout.addStretch()
+        top_bar_layout.addWidget(user_label)
+        top_bar_layout.addSpacing(20)
+        top_bar_layout.addWidget(logout_btn)
+        
+        top_bar.setLayout(top_bar_layout)
 
-        header_frame.setLayout(header_layout)
-        content_layout.addWidget(header_frame)
-
-        # Charts Section Header
-        charts_header = QLabel("📊 Data Visualizations")
-        charts_header.setStyleSheet(f"""
+        # Data Visualizations Section Header (LARGER)
+        viz_header = QLabel("📊 Data Visualizations")
+        viz_header.setStyleSheet(f"""
             QLabel {{
                 color: {PRIMARY_MAIN};
                 font-size: 34px;
                 font-weight: 700;
-                padding: 10px 0px;
+                padding: 18px 0px;
+                letter-spacing: -0.3px;
             }}
         """)
-        content_layout.addWidget(charts_header)
 
-        # Charts Grid (2x2)
+        # Charts Grid (2x2) with MUCH LARGER CHARTS
         charts_grid = QGridLayout()
-        charts_grid.setSpacing(18)
+        charts_grid.setSpacing(20)
+        charts_grid.setContentsMargins(0, 0, 0, 0)
 
-        # Create 4 charts
-        self.chart_type = ChartCanvas(6.2, 4.5)
-        self.chart_avg_type = ChartCanvas(6.2, 4.5)
-        self.chart_top10 = ChartCanvas(6.2, 4.5)
-        self.chart_sorted = ChartCanvas(6.2, 4.5)
+        # Create chart containers with larger charts
+        self.chart_type = ChartCanvas(width=10, height=7)
+        self.chart_avg_type = ChartCanvas(width=10, height=7)
+        self.chart_top10 = ChartCanvas(width=10, height=7)
+        self.chart_sorted = ChartCanvas(width=10, height=7)
 
-        # Create chart frames
-        chart1_frame = self.create_chart_card(self.chart_type)
-        chart2_frame = self.create_chart_card(self.chart_avg_type)
-        chart3_frame = self.create_chart_card(self.chart_top10)
-        chart4_frame = self.create_chart_card(self.chart_sorted)
+        # Wrap charts in styled frames
+        chart_frames = []
+        for chart in [self.chart_type, self.chart_avg_type, self.chart_top10, self.chart_sorted]:
+            frame = QFrame()
+            frame.setStyleSheet(f"""
+                QFrame {{
+                    background-color: white;
+                    border-radius: 18px;
+                    border: 2px solid {NEUTRAL_LIGHT};
+                    padding: 10px;
+                }}
+            """)
+            
+            # Add shadow effect
+            shadow = QGraphicsDropShadowEffect()
+            shadow.setBlurRadius(20)
+            shadow.setColor(QColor(0, 0, 0, 50))
+            shadow.setOffset(0, 5)
+            frame.setGraphicsEffect(shadow)
+            
+            frame_layout = QVBoxLayout()
+            frame_layout.setContentsMargins(8, 8, 8, 8)
+            frame_layout.addWidget(chart)
+            frame.setLayout(frame_layout)
+            frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            chart_frames.append(frame)
 
-        charts_grid.addWidget(chart1_frame, 0, 0)
-        charts_grid.addWidget(chart2_frame, 0, 1)
-        charts_grid.addWidget(chart3_frame, 1, 0)
-        charts_grid.addWidget(chart4_frame, 1, 1)
+        # Add charts to grid (2x2 layout)
+        charts_grid.addWidget(chart_frames[0], 0, 0)  # Top-left
+        charts_grid.addWidget(chart_frames[1], 0, 1)  # Top-right
+        charts_grid.addWidget(chart_frames[2], 1, 0)  # Bottom-left
+        charts_grid.addWidget(chart_frames[3], 1, 1)  # Bottom-right
 
-        content_layout.addLayout(charts_grid, 1)
-
-        # Table Section
+        # Equipment Data Table Section (LARGER TEXT)
         table_header = QLabel("📋 Equipment Data Table")
         table_header.setStyleSheet(f"""
             QLabel {{
                 color: {PRIMARY_MAIN};
                 font-size: 34px;
                 font-weight: 700;
-                padding: 10px 0px;
+                padding: 18px 0px;
+                letter-spacing: -0.3px;
             }}
         """)
-        content_layout.addWidget(table_header)
 
-        table_frame = QFrame()
-        table_frame.setStyleSheet(f"""
-            QFrame {{
-                background-color: white;
-                border-radius: 16px;
-                border: 2px solid {NEUTRAL_LIGHT};
-                padding: 18px;
-            }}
-        """)
-        table_frame.setMaximumHeight(240)
-        
-        table_layout = QVBoxLayout()
-        table_layout.setContentsMargins(12, 12, 12, 12)
-
+        # Table with MUCH LARGER text
         self.table = QTableWidget()
         self.table.setColumnCount(5)
         self.table.setHorizontalHeaderLabels([
-            "Equipment Name", "Type", "Flowrate", "Pressure", "Temperature"
+            "EQUIPMENT NAME", "TYPE", "FLOWRATE", "PRESSURE", "TEMPERATURE"
         ])
-
-        self.table.horizontalHeader().setStretchLastSection(True)
-        self.table.setAlternatingRowColors(True)
+        
+        # Enhanced table styling with LARGER TEXT
         self.table.setStyleSheet(f"""
             QTableWidget {{
                 background-color: white;
-                border: none;
-                border-radius: 8px;
+                border: 3px solid {NEUTRAL_LIGHT};
+                border-radius: 16px;
                 gridline-color: {NEUTRAL_LIGHT};
-                font-size: 21px;
+                font-size: 22px;
+                selection-background-color: {PRIMARY_LIGHT};
+                selection-color: white;
             }}
             QTableWidget::item {{
-                padding: 16px;
+                padding: 18px 14px;
+                border-bottom: 1px solid {NEUTRAL_LIGHTEST};
             }}
             QTableWidget::item:selected {{
                 background-color: {PRIMARY_LIGHT};
                 color: white;
             }}
+            QTableWidget::item:hover {{
+                background-color: {NEUTRAL_LIGHTEST};
+            }}
             QHeaderView::section {{
-                background-color: {PRIMARY_MAIN};
+                background: qlineargradient(
+                    x1:0, y1:0, x2:0, y2:1,
+                    stop:0 {PRIMARY_LIGHT},
+                    stop:1 {PRIMARY_MAIN}
+                );
                 color: white;
-                padding: 19px;
+                padding: 22px 16px;
                 border: none;
                 font-weight: 700;
-                font-size: 21px;
+                font-size: 22px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }}
+            QHeaderView::section:hover {{
+                background: qlineargradient(
+                    x1:0, y1:0, x2:0, y2:1,
+                    stop:0 {PRIMARY_GLOW},
+                    stop:1 {PRIMARY_LIGHT}
+                );
             }}
         """)
+        
+        # Set table properties for FULL WIDTH display
+        self.table.setAlternatingRowColors(True)
+        self.table.setSelectionBehavior(QTableWidget.SelectRows)
+        self.table.setSelectionMode(QTableWidget.SingleSelection)
+        self.table.verticalHeader().setVisible(False)
+        self.table.setMinimumHeight(400)
+        
+        # Make ALL columns stretch to fill width - NO WHITE SPACE!
+        header = self.table.horizontalHeader()
+        for i in range(5):
+            header.setSectionResizeMode(i, QHeaderView.Stretch)
+        
+        # Add shadow to table
+        table_shadow = QGraphicsDropShadowEffect()
+        table_shadow.setBlurRadius(20)
+        table_shadow.setColor(QColor(0, 0, 0, 50))
+        table_shadow.setOffset(0, 5)
+        self.table.setGraphicsEffect(table_shadow)
 
-        table_layout.addWidget(self.table)
-        table_frame.setLayout(table_layout)
-        content_layout.addWidget(table_frame)
+        # Add all components to content layout
+        content_layout.addWidget(top_bar)
+        content_layout.addWidget(viz_header)
+        content_layout.addLayout(charts_grid, stretch=2)
+        content_layout.addWidget(table_header)
+        content_layout.addWidget(self.table, stretch=1)
 
-        content_area.setLayout(content_layout)
+        content_widget.setLayout(content_layout)
 
         # Add sidebar and content to main layout
+        scroll_area.setWidget(content_widget)
+
+        # Add sidebar and scroll area to main layout
         main_layout.addWidget(sidebar)
-        main_layout.addWidget(content_area)
-
+        main_layout.addWidget(scroll_area, 1)
+        
         self.setLayout(main_layout)
-        
-        # Initialize charts
-        self.initialize_empty_charts()
-
-    def create_chart_card(self, chart_widget):
-        """Create styled card for charts"""
-        frame = QFrame()
-        frame.setStyleSheet(f"""
-            QFrame {{
-                background-color: white;
-                border-radius: 16px;
-                border: 2px solid {NEUTRAL_LIGHT};
-                padding: 14px;
-            }}
-        """)
-        
-        layout = QVBoxLayout()
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.addWidget(chart_widget)
-        frame.setLayout(layout)
-        
-        return frame
-
-    def initialize_empty_charts(self):
-        """Initialize charts with placeholders"""
-        placeholder_style = {
-            'ha': 'center', 'va': 'center',
-            'fontsize': 20, 'color': NEUTRAL_MEDIUM, 'weight': 'bold'
-        }
-        
-        self.chart_type.ax.clear()
-        self.chart_type.ax.text(0.5, 0.5, 'Upload CSV\nEquipment Types', 
-                                transform=self.chart_type.ax.transAxes, **placeholder_style)
-        self.chart_type.ax.set_xticks([])
-        self.chart_type.ax.set_yticks([])
-        self.chart_type.draw()
-        
-        self.chart_avg_type.ax.clear()
-        self.chart_avg_type.ax.text(0.5, 0.5, 'Upload CSV\nAverage Parameters', 
-                                     transform=self.chart_avg_type.ax.transAxes, **placeholder_style)
-        self.chart_avg_type.ax.set_xticks([])
-        self.chart_avg_type.ax.set_yticks([])
-        self.chart_avg_type.draw()
-        
-        self.chart_top10.ax.clear()
-        self.chart_top10.ax.text(0.5, 0.5, 'Upload CSV\nTop 10 Equipment', 
-                                 transform=self.chart_top10.ax.transAxes, **placeholder_style)
-        self.chart_top10.ax.set_xticks([])
-        self.chart_top10.ax.set_yticks([])
-        self.chart_top10.draw()
-        
-        self.chart_sorted.ax.clear()
-        self.chart_sorted.ax.text(0.5, 0.5, 'Upload CSV\nParameter Distribution', 
-                                  transform=self.chart_sorted.ax.transAxes, **placeholder_style)
-        self.chart_sorted.ax.set_xticks([])
-        self.chart_sorted.ax.set_yticks([])
-        self.chart_sorted.draw()
 
     # ==========================
-    # CSV UPLOAD
+    # UPLOAD CSV
     # ==========================
     def upload_csv(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select CSV File", "", "CSV Files (*.csv)")
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Select CSV File", "", "CSV Files (*.csv)"
+        )
         if not file_path:
             return
 
@@ -494,14 +579,14 @@ class DashboardWindow(QWidget):
 
             self.stats_label.setText(
                 f"""
-<div style='line-height: 2.4; color: white;'>
-<p style='font-size: 23px; color: {SECONDARY_LIGHT}; font-weight: 700; margin-bottom: 14px;'>
-✅ Data Loaded
+<div style='line-height: 2.2; color: white;'>
+<p style='font-size: 24px; color: {SECONDARY_LIGHT}; font-weight: 700; margin-bottom: 14px;'>
+✅ Data Loaded Successfully
 </p>
-<p style='font-size: 21px;'><b>Total:</b> {data['total_equipment']}</p>
-<p style='font-size: 21px;'><b>Flowrate:</b> {data['avg_flowrate']:.2f}</p>
-<p style='font-size: 21px;'><b>Pressure:</b> {data['avg_pressure']:.2f}</p>
-<p style='font-size: 21px;'><b>Temp:</b> {data['avg_temperature']:.2f}</p>
+<p style='font-size: 22px;'><b>Total Equipment:</b> {data['total_equipment']}</p>
+<p style='font-size: 22px;'><b>Avg Flowrate:</b> {data['avg_flowrate']:.2f}</p>
+<p style='font-size: 22px;'><b>Avg Pressure:</b> {data['avg_pressure']:.2f}</p>
+<p style='font-size: 22px;'><b>Avg Temperature:</b> {data['avg_temperature']:.2f}</p>
 </div>
 """
             )
@@ -514,27 +599,51 @@ class DashboardWindow(QWidget):
             self.show_message("Error", str(e), QMessageBox.Critical)
 
     # ==========================
-    # DRAW CHARTS
+    # DRAW CHARTS (MUCH LARGER & MORE READABLE)
     # ==========================
     def draw_charts(self, data):
         equipment = data["data"]
-        colors = [PRIMARY_MAIN, SECONDARY_MAIN, ACCENT_MAIN, PRIMARY_LIGHT, SECONDARY_LIGHT, "#6A4C93"]
         
-        # Chart 1: Pie
+        # Professional color palette
+        colors = [
+            CHART_COLOR_1, CHART_COLOR_2, CHART_COLOR_3, 
+            CHART_COLOR_4, CHART_COLOR_5, CHART_COLOR_6,
+            CHART_COLOR_7, CHART_COLOR_8
+        ]
+        
+        # Chart 1: Pie Chart (MUCH LARGER TEXT)
         self.chart_type.ax.clear()
         types = data["type_distribution"]
         wedges, texts, autotexts = self.chart_type.ax.pie(
-            types.values(), labels=types.keys(), autopct="%1.1f%%",
-            startangle=90, colors=colors, textprops={'fontsize': 16, 'weight': 'bold'}
+            types.values(), 
+            labels=types.keys(), 
+            autopct="%1.1f%%",
+            startangle=90, 
+            colors=colors[:len(types)],
+            textprops={'fontsize': 16, 'weight': 'bold'},
+            explode=[0.05] * len(types),
+            shadow=True,
+            pctdistance=0.82,
+            labeldistance=1.1
         )
         for autotext in autotexts:
             autotext.set_color('white')
             autotext.set_fontsize(15)
             autotext.set_weight('bold')
-        self.chart_type.ax.set_title("Equipment Types", fontsize=22, weight='bold', color=PRIMARY_MAIN, pad=18)
+        for text in texts:
+            text.set_fontsize(16)
+            text.set_weight('700')
+        self.chart_type.ax.set_title(
+            "Equipment Types Distribution", 
+            fontsize=22,
+            weight='bold', 
+            color=PRIMARY_MAIN, 
+            pad=18
+        )
+        self.chart_type.fig.subplots_adjust(left=0.05, right=0.95, top=0.85, bottom=0.05)
         self.chart_type.draw()
 
-        # Chart 2: Bar
+        # Chart 2: Bar Chart (MUCH LARGER TEXT)
         from collections import defaultdict
         type_groups = defaultdict(list)
         for e in equipment:
@@ -551,52 +660,126 @@ class DashboardWindow(QWidget):
             avg_temp.append(sum(i["temperature"] for i in items) / len(items))
 
         x = range(len(types))
+        bar_width = 0.25
+        
         self.chart_avg_type.ax.clear()
-        self.chart_avg_type.ax.bar(x, avg_flow, width=0.25, label="Flow", color=SECONDARY_MAIN)
-        self.chart_avg_type.ax.bar([i+0.25 for i in x], avg_pressure, width=0.25, label="Press", color=PRIMARY_MAIN)
-        self.chart_avg_type.ax.bar([i+0.5 for i in x], avg_temp, width=0.25, label="Temp", color=ACCENT_MAIN)
-        self.chart_avg_type.ax.set_xticks([i+0.25 for i in x])
-        self.chart_avg_type.ax.set_xticklabels(types, rotation=18, fontsize=15)
-        self.chart_avg_type.ax.set_title("Avg Parameters", fontsize=22, weight='bold', color=PRIMARY_MAIN, pad=18)
-        self.chart_avg_type.ax.legend(fontsize=16, frameon=True, shadow=True, loc='upper right')
-        self.chart_avg_type.ax.grid(axis='y', alpha=0.3, linestyle='--')
-        self.chart_avg_type.ax.tick_params(axis='both', labelsize=14)
+        bars1 = self.chart_avg_type.ax.bar(
+            x, avg_flow, width=bar_width, 
+            label="Flowrate", color=SECONDARY_MAIN, 
+            edgecolor='white', linewidth=1.5
+        )
+        bars2 = self.chart_avg_type.ax.bar(
+            [i+bar_width for i in x], avg_pressure, width=bar_width, 
+            label="Pressure", color=PRIMARY_MAIN,
+            edgecolor='white', linewidth=1.5
+        )
+        bars3 = self.chart_avg_type.ax.bar(
+            [i+bar_width*2 for i in x], avg_temp, width=bar_width, 
+            label="Temperature", color=ACCENT_MAIN,
+            edgecolor='white', linewidth=1.5
+        )
+        
+        self.chart_avg_type.ax.set_xticks([i+bar_width for i in x])
+        self.chart_avg_type.ax.set_xticklabels(types, rotation=12, ha='right', fontsize=14)
+        self.chart_avg_type.ax.set_title(
+            "Average Parameters by Type", 
+            fontsize=22,
+            weight='bold', 
+            color=PRIMARY_MAIN, 
+            pad=18
+        )
+        self.chart_avg_type.ax.legend(fontsize=14, frameon=True, shadow=True, loc='upper right')
+        self.chart_avg_type.ax.grid(axis='y', alpha=0.3, linestyle='--', linewidth=1)
+        self.chart_avg_type.ax.tick_params(axis='both', labelsize=13)
+        self.chart_avg_type.ax.set_ylabel("Value", fontsize=15, weight='bold')
+        self.chart_avg_type.fig.subplots_adjust(left=0.10, right=0.96, top=0.85, bottom=0.12)
         self.chart_avg_type.draw()
 
-        # Chart 3: Top 10
+        # Chart 3: Top 10 Equipment (MUCH LARGER TEXT)
         top10 = equipment[:10]
-        names = [e["equipmentName"][:9]+"..." if len(e["equipmentName"])>9 else e["equipmentName"] for e in top10]
+        names = [e["equipmentName"][:12]+"..." if len(e["equipmentName"])>12 else e["equipmentName"] for e in top10]
         flow = [e["flowrate"] for e in top10]
         pressure = [e["pressure"] for e in top10]
         temp = [e["temperature"] for e in top10]
 
         x = range(len(names))
+        
         self.chart_top10.ax.clear()
-        self.chart_top10.ax.bar(x, flow, width=0.25, label="Flow", color=SECONDARY_MAIN)
-        self.chart_top10.ax.bar([i+0.25 for i in x], pressure, width=0.25, label="Press", color=PRIMARY_MAIN)
-        self.chart_top10.ax.bar([i+0.5 for i in x], temp, width=0.25, label="Temp", color=ACCENT_MAIN)
-        self.chart_top10.ax.set_xticks([i+0.25 for i in x])
-        self.chart_top10.ax.set_xticklabels(names, rotation=32, ha='right', fontsize=13)
-        self.chart_top10.ax.set_title("Top 10 Equipment", fontsize=22, weight='bold', color=PRIMARY_MAIN, pad=18)
-        self.chart_top10.ax.legend(fontsize=16, frameon=True, shadow=True, loc='upper right')
-        self.chart_top10.ax.grid(axis='y', alpha=0.3, linestyle='--')
-        self.chart_top10.ax.tick_params(axis='both', labelsize=14)
+        bars1 = self.chart_top10.ax.bar(
+            x, flow, width=bar_width, 
+            label="Flowrate", color=SECONDARY_MAIN,
+            edgecolor='white', linewidth=1.5
+        )
+        bars2 = self.chart_top10.ax.bar(
+            [i+bar_width for i in x], pressure, width=bar_width, 
+            label="Pressure", color=PRIMARY_MAIN,
+            edgecolor='white', linewidth=1.5
+        )
+        bars3 = self.chart_top10.ax.bar(
+            [i+bar_width*2 for i in x], temp, width=bar_width, 
+            label="Temperature", color=ACCENT_MAIN,
+            edgecolor='white', linewidth=1.5
+        )
+        
+        self.chart_top10.ax.set_xticks([i+bar_width for i in x])
+        self.chart_top10.ax.set_xticklabels(names, rotation=28, ha='right', fontsize=13)
+        self.chart_top10.ax.set_title(
+            "Top 10 Equipment", 
+            fontsize=22,
+            weight='bold', 
+            color=PRIMARY_MAIN, 
+            pad=18
+        )
+        self.chart_top10.ax.legend(fontsize=14, frameon=True, shadow=True, loc='upper right')
+        self.chart_top10.ax.grid(axis='y', alpha=0.3, linestyle='--', linewidth=1)
+        self.chart_top10.ax.tick_params(axis='both', labelsize=13)
+        self.chart_top10.ax.set_ylabel("Value", fontsize=15, weight='bold')
+        self.chart_top10.fig.subplots_adjust(left=0.10, right=0.96, top=0.85, bottom=0.16)
         self.chart_top10.draw()
 
-        # Chart 4: Line
+        # Chart 4: Parameter Distribution (MUCH LARGER TEXT)
         sorted_eq = sorted(equipment, key=lambda x: x["flowrate"])
         flow_sorted = [e["flowrate"] for e in sorted_eq]
         pressure_sorted = [e["pressure"] for e in sorted_eq]
 
         self.chart_sorted.ax.clear()
-        self.chart_sorted.ax.plot(flow_sorted, label="Flowrate", marker="o", linewidth=3.2, color=SECONDARY_MAIN, markersize=4.5)
-        self.chart_sorted.ax.plot(pressure_sorted, label="Pressure", marker="s", linewidth=3.2, color=PRIMARY_MAIN, markersize=4.5)
-        self.chart_sorted.ax.set_title("Parameter Distribution", fontsize=22, weight='bold', color=PRIMARY_MAIN, pad=18)
-        self.chart_sorted.ax.legend(fontsize=16, frameon=True, shadow=True, loc='upper left')
-        self.chart_sorted.ax.grid(alpha=0.3, linestyle='--')
-        self.chart_sorted.ax.set_xlabel("Equipment Index", fontsize=16, weight='bold')
-        self.chart_sorted.ax.set_ylabel("Value", fontsize=16, weight='bold')
-        self.chart_sorted.ax.tick_params(axis='both', labelsize=14)
+        self.chart_sorted.ax.plot(
+            flow_sorted, 
+            label="Flowrate", 
+            marker="o", 
+            linewidth=3,
+            color=SECONDARY_MAIN, 
+            markersize=4,
+            alpha=0.9
+        )
+        self.chart_sorted.ax.plot(
+            pressure_sorted, 
+            label="Pressure", 
+            marker="s", 
+            linewidth=3,
+            color=PRIMARY_MAIN, 
+            markersize=4,
+            alpha=0.9
+        )
+        self.chart_sorted.ax.set_title(
+            "Parameter Distribution", 
+            fontsize=22,
+            weight='bold', 
+            color=PRIMARY_MAIN, 
+            pad=18
+        )
+        self.chart_sorted.ax.legend(fontsize=14, frameon=True, shadow=True, loc='upper left')
+        self.chart_sorted.ax.grid(alpha=0.3, linestyle='--', linewidth=1)
+        self.chart_sorted.ax.set_xlabel("Equipment Index", fontsize=15, weight='bold')
+        self.chart_sorted.ax.set_ylabel("Value", fontsize=15, weight='bold')
+        self.chart_sorted.ax.tick_params(axis='both', labelsize=13)
+        self.chart_sorted.ax.fill_between(
+            range(len(flow_sorted)), 
+            flow_sorted, 
+            alpha=0.1, 
+            color=SECONDARY_MAIN
+        )
+        self.chart_sorted.fig.subplots_adjust(left=0.10, right=0.96, top=0.85, bottom=0.12)
         self.chart_sorted.draw()
 
     def download_pdf(self):
@@ -604,13 +787,17 @@ class DashboardWindow(QWidget):
             self.show_message("No Dataset", "Please upload or select a dataset first.", QMessageBox.Warning)
             return
 
-        save_path, _ = QFileDialog.getSaveFileName(self, "Save PDF", f"report_{self.current_dataset_id}.pdf", "PDF Files (*.pdf)")
+        save_path, _ = QFileDialog.getSaveFileName(
+            self, "Save PDF", f"report_{self.current_dataset_id}.pdf", "PDF Files (*.pdf)"
+        )
         if not save_path:
             return
 
         try:
-            response = requests.get(f"http://127.0.0.1:8000/api/pdf/{self.current_dataset_id}/", 
-                                    headers={"Authorization": f"Token {self.token}"})
+            response = requests.get(
+                f"http://127.0.0.1:8000/api/pdf/{self.current_dataset_id}/", 
+                headers={"Authorization": f"Token {self.token}"}
+            )
             if response.status_code != 200:
                 self.show_message("Error", "Failed to generate PDF", QMessageBox.Warning)
                 return
@@ -623,7 +810,10 @@ class DashboardWindow(QWidget):
 
     def load_history(self):
         try:
-            response = requests.get("http://127.0.0.1:8000/api/history/", headers={"Authorization": f"Token {self.token}"})
+            response = requests.get(
+                "http://127.0.0.1:8000/api/history/", 
+                headers={"Authorization": f"Token {self.token}"}
+            )
             if response.status_code != 200:
                 return
             self.history_list.clear()
@@ -635,21 +825,24 @@ class DashboardWindow(QWidget):
     def load_selected_dataset(self, item):
         index = self.history_list.row(item)
         try:
-            response = requests.get("http://127.0.0.1:8000/api/history/", headers={"Authorization": f"Token {self.token}"})
+            response = requests.get(
+                "http://127.0.0.1:8000/api/history/", 
+                headers={"Authorization": f"Token {self.token}"}
+            )
             datasets = response.json()
             dataset = datasets[index]
             self.current_dataset_id = dataset["id"]
 
             self.stats_label.setText(
                 f"""
-<div style='line-height: 2.4; color: white;'>
-<p style='font-size: 23px; color: {SECONDARY_LIGHT}; font-weight: 700; margin-bottom: 14px;'>
-✅ From History
+<div style='line-height: 2.2; color: white;'>
+<p style='font-size: 26px; color: {SECONDARY_LIGHT}; font-weight: 700; margin-bottom: 14px;'>
+✅ Loaded from History
 </p>
-<p style='font-size: 21px;'><b>Total:</b> {dataset['total_equipment']}</p>
-<p style='font-size: 21px;'><b>Flowrate:</b> {dataset['avg_flowrate']:.2f}</p>
-<p style='font-size: 21px;'><b>Pressure:</b> {dataset['avg_pressure']:.2f}</p>
-<p style='font-size: 21px;'><b>Temp:</b> {dataset['avg_temperature']:.2f}</p>
+<p style='font-size: 24px;'><b>Total Equipment:</b> {dataset['total_equipment']}</p>
+<p style='font-size: 24px;'><b>Avg Flowrate:</b> {dataset['avg_flowrate']:.2f}</p>
+<p style='font-size: 24px;'><b>Avg Pressure:</b> {dataset['avg_pressure']:.2f}</p>
+<p style='font-size: 24px;'><b>Avg Temperature:</b> {dataset['avg_temperature']:.2f}</p>
 </div>
 """
             )
@@ -673,10 +866,35 @@ class DashboardWindow(QWidget):
         msg.setText(message)
         msg.setIcon(icon)
         msg.setStyleSheet(f"""
-            QMessageBox {{ background-color: white; }}
-            QMessageBox QLabel {{ color: {NEUTRAL_DARKEST}; font-size: 20px; min-width: 420px; padding: 16px; }}
-            QPushButton {{ background-color: {PRIMARY_MAIN}; color: white; border: none; border-radius: 10px; 
-                          padding: 16px 34px; font-size: 19px; font-weight: 600; min-width: 120px; }}
-            QPushButton:hover {{ background-color: {PRIMARY_LIGHT}; }}
+            QMessageBox {{ 
+                background-color: white; 
+            }}
+            QMessageBox QLabel {{ 
+                color: {NEUTRAL_DARKEST}; 
+                font-size: 20px; 
+                min-width: 500px; 
+                padding: 24px; 
+            }}
+            QPushButton {{ 
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {PRIMARY_MAIN},
+                    stop:1 {PRIMARY_LIGHT}
+                );
+                color: white; 
+                border: none; 
+                border-radius: 12px; 
+                padding: 16px 36px; 
+                font-size: 18px; 
+                font-weight: 700; 
+                min-width: 130px; 
+            }}
+            QPushButton:hover {{ 
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {PRIMARY_LIGHT},
+                    stop:1 {PRIMARY_GLOW}
+                );
+            }}
         """)
         msg.exec_()
