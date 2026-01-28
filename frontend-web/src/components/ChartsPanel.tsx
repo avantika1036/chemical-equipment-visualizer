@@ -15,6 +15,7 @@ import {
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import { motion } from 'framer-motion';
 import { DatasetSummary } from '@/types/equipment';
+import { PieChart, BarChart3, TrendingUp, Layers } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -29,20 +30,21 @@ ChartJS.register(
   Filler
 );
 
+// EXACT PyQt5 Desktop App Colors
 const chartColors = {
-  primary: 'hsl(215, 80%, 45%)',
-  accent: 'hsl(25, 95%, 53%)',
-  success: 'hsl(142, 76%, 36%)',
-  purple: 'hsl(280, 65%, 60%)',
-  info: 'hsl(199, 89%, 48%)',
+  blue: '#0A4D8C',
+  teal: '#00A896',
+  orange: '#F77F00',
+  purple: '#6A4C93',
+  red: '#E63946',
+  green: '#2A9D8F',
+  yellow: '#E9C46A',
+  darkBlue: '#264653',
 };
 
 const chartColorsPalette = [
-  chartColors.primary,
-  chartColors.accent,
-  chartColors.success,
-  chartColors.purple,
-  chartColors.info,
+  chartColors.blue, chartColors.teal, chartColors.orange, chartColors.purple,
+  chartColors.red, chartColors.green, chartColors.yellow, chartColors.darkBlue,
 ];
 
 interface ChartsPanelProps {
@@ -50,88 +52,62 @@ interface ChartsPanelProps {
 }
 
 export const ChartsPanel: React.FC<ChartsPanelProps> = ({ summary }) => {
-
-  /* ✅ FIX — SAFE VARIABLES */
   const safeTypeDistribution =
     summary?.typeDistribution && typeof summary.typeDistribution === 'object'
-      ? summary.typeDistribution
-      : {};
+      ? summary.typeDistribution : {};
 
-  const safeData = Array.isArray(summary?.data)
-    ? summary.data
-    : [];
-
-  /* ================= TYPE DISTRIBUTION ================= */
+  const safeData = Array.isArray(summary?.data) ? summary.data : [];
 
   const typeDistributionData = {
     labels: Object.keys(safeTypeDistribution),
-    datasets: [
-      {
-        data: Object.values(safeTypeDistribution),
-        backgroundColor: chartColorsPalette.slice(
-          0,
-          Object.keys(safeTypeDistribution).length
-        ),
-        borderWidth: 2,
-        borderColor: 'hsl(0, 0%, 100%)',
-      },
-    ],
+    datasets: [{
+      data: Object.values(safeTypeDistribution),
+      backgroundColor: chartColorsPalette.slice(0, Object.keys(safeTypeDistribution).length),
+      borderWidth: 3,
+      borderColor: '#FFFFFF',
+      hoverOffset: 10,
+    }],
   };
-
-  /* ================= TOP 10 ================= */
 
   const top10Equipment = safeData.slice(0, 10);
-
   const parametersBarData = {
-    labels: top10Equipment.map((e) =>
-      e.equipmentName?.substring(0, 15)
-    ),
+    labels: top10Equipment.map((e) => e.equipmentName?.substring(0, 12)),
     datasets: [
-      {
-        label: 'Flowrate (m³/h)',
-        data: top10Equipment.map((e) => e.flowrate),
-        backgroundColor: chartColors.primary,
-        borderRadius: 4,
-      },
-      {
-        label: 'Pressure (bar)',
-        data: top10Equipment.map((e) => e.pressure),
-        backgroundColor: chartColors.accent,
-        borderRadius: 4,
-      },
-      {
-        label: 'Temperature (°C)',
-        data: top10Equipment.map((e) => e.temperature),
-        backgroundColor: chartColors.success,
-        borderRadius: 4,
-      },
+      { label: 'Flowrate (m³/h)', data: top10Equipment.map((e) => e.flowrate), backgroundColor: chartColors.teal, borderRadius: 6 },
+      { label: 'Pressure (bar)', data: top10Equipment.map((e) => e.pressure), backgroundColor: chartColors.blue, borderRadius: 6 },
+      { label: 'Temperature (°C)', data: top10Equipment.map((e) => e.temperature), backgroundColor: chartColors.orange, borderRadius: 6 },
     ],
   };
 
-  /* ================= LINE ================= */
-
-  const sortedByFlowrate = [...safeData].sort(
-    (a, b) => a.flowrate - b.flowrate
-  );
-
+  const sortedByFlowrate = [...safeData].sort((a, b) => a.flowrate - b.flowrate);
   const lineChartData = {
-    labels: sortedByFlowrate.slice(0, 15).map((_, i) => `#${i + 1}`),
+    labels: sortedByFlowrate.slice(0, 20).map((_, i) => `${i + 1}`),
     datasets: [
       {
         label: 'Flowrate',
-        data: sortedByFlowrate.slice(0, 15).map((e) => e.flowrate),
-        borderColor: chartColors.primary,
-        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+        data: sortedByFlowrate.slice(0, 20).map((e) => e.flowrate),
+        borderColor: chartColors.teal,
+        backgroundColor: 'rgba(0, 168, 150, 0.1)',
         fill: true,
         tension: 0.4,
+        borderWidth: 3,
+        pointRadius: 4,
+        pointBackgroundColor: chartColors.teal,
+        pointBorderColor: '#FFF',
+        pointBorderWidth: 2,
       },
       {
         label: 'Pressure',
-        data: sortedByFlowrate.slice(0, 15).map((e) => e.pressure),
-        borderColor: chartColors.accent,
-        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+        data: sortedByFlowrate.slice(0, 20).map((e) => e.pressure),
+        borderColor: chartColors.blue,
+        backgroundColor: 'rgba(10, 77, 140, 0.1)',
         fill: true,
         tension: 0.4,
+        borderWidth: 3,
+        pointRadius: 4,
+        pointBackgroundColor: chartColors.blue,
+        pointBorderColor: '#FFF',
+        pointBorderWidth: 2,
       },
     ],
   };
@@ -142,57 +118,40 @@ export const ChartsPanel: React.FC<ChartsPanelProps> = ({ summary }) => {
     plugins: {
       legend: {
         position: 'bottom' as const,
+        labels: { padding: 15, font: { size: 14, weight: 'bold' as const }, usePointStyle: true },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        padding: 12,
+        titleFont: { size: 14, weight: 'bold' as const },
+        bodyFont: { size: 13 },
+        cornerRadius: 8,
       },
     },
   };
 
-  const barOptions = {
-    ...commonOptions,
-    scales: {
-      x: { grid: { display: false } },
-      y: { grid: { color: 'rgba(0,0,0,0.05)' } },
-    },
-  };
+  const charts = [
+    { icon: <PieChart className="w-6 h-6 text-primary" />, title: "Equipment Types", component: <Pie data={typeDistributionData} options={{...commonOptions, plugins: {...commonOptions.plugins, legend: {...commonOptions.plugins.legend, position: 'right' as const}}}} />, delay: 0 },
+    { icon: <BarChart3 className="w-6 h-6 text-secondary" />, title: "Avg Parameters", component: <Bar data={parametersBarData} options={{...commonOptions, scales: { x: { grid: { display: false }}, y: { grid: { color: 'rgba(0,0,0,0.06)'}}}}} />, delay: 0.1 },
+    { icon: <Layers className="w-6 h-6 text-accent" />, title: "Top 10 Equipment", component: <Bar data={parametersBarData} options={{...commonOptions, scales: { x: { grid: { display: false }}, y: { grid: { color: 'rgba(0,0,0,0.06)'}}}}} />, delay: 0.2 },
+    { icon: <TrendingUp className="w-6 h-6 text-info" />, title: "Parameter Distribution", component: <Line data={lineChartData} options={{...commonOptions, scales: { x: { grid: { display: false }}, y: { grid: { color: 'rgba(0,0,0,0.06)'}}}}} />, delay: 0.3 },
+  ];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-      <motion.div className="chart-container">
-        <h3 className="text-lg font-semibold mb-4">
-          Equipment Type Distribution
-        </h3>
-        <div className="h-[300px]">
-          <Pie data={typeDistributionData} options={commonOptions} />
-        </div>
-      </motion.div>
-
-      <motion.div className="chart-container">
-        <h3 className="text-lg font-semibold mb-4">
-          Average Parameters by Type
-        </h3>
-        <div className="h-[300px]">
-          <Bar data={parametersBarData} options={barOptions} />
-        </div>
-      </motion.div>
-
-      <motion.div className="chart-container">
-        <h3 className="text-lg font-semibold mb-4">
-          Top 10 Equipment Parameters
-        </h3>
-        <div className="h-[300px]">
-          <Bar data={parametersBarData} options={barOptions} />
-        </div>
-      </motion.div>
-
-      <motion.div className="chart-container">
-        <h3 className="text-lg font-semibold mb-4">
-          Parameter Distribution (Sorted by Flowrate)
-        </h3>
-        <div className="h-[300px]">
-          <Line data={lineChartData} options={barOptions} />
-        </div>
-      </motion.div>
-
+      {charts.map((chart, i) => (
+        <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: chart.delay }} className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="relative bg-white rounded-2xl p-6 shadow-card hover:shadow-card-hover border-3 border-neutral-light group-hover:border-primary-light transition-all">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20">{chart.icon}</div>
+              <h3 className="text-xl font-bold">{chart.title}</h3>
+            </div>
+            <div className="h-[350px]">{chart.component}</div>
+            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-secondary to-accent rounded-b-2xl"></div>
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 };
