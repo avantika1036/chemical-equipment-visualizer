@@ -74,7 +74,7 @@ export const Header: React.FC = () => {
 
             {/* GitHub */}
             <a
-              href="https://github.com"
+              href="https://github.com/avantika1036/chemical-equipment-visualizer.git"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-lg hover:bg-muted transition-colors"

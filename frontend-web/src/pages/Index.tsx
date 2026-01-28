@@ -168,12 +168,23 @@ const Index = () => {
 
                 <div className="flex gap-2">
                   <Button
-                  onClick={() =>
-                    window.open(
-                      `http://localhost:8000/api/pdf/${currentDataset.id}/`,
-                      "_blank"
-                    )
-                  }
+                  onClick={async () => {
+                    try {
+                      const response = await api.get(`pdf/${currentDataset.id}/`, {
+                        responseType: 'blob'
+                      });
+                      const url = window.URL.createObjectURL(response.data);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = `${currentDataset.fileName.replace('.csv', '')}_report.pdf`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      window.URL.revokeObjectURL(url);
+                    } catch (error) {
+                      console.error('Failed to download PDF:', error);
+                    }
+                  }}
                 >
                   <FileDown className="w-4 h-4 mr-2" />
                   Download PDF Report
