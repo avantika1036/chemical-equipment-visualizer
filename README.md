@@ -759,14 +759,20 @@ The project includes both **Web** and **Desktop** implementations connected to t
 - Equipment data table with sorting and search
 - PDF report generation
 
+
 <p align="center">
-  <img width="45%" alt="image" src="https://github.com/user-attachments/assets/c0c4fedc-7e00-4473-b853-6014b89c333c" />
-  <img width="45%" alt="image" src="https://github.com/user-attachments/assets/89462b15-f475-4815-9942-f233f5beb4c3" />
+  <img width="45%" alt="image" src="https://github.com/user-attachments/assets/c0c4fedc-7e00-4473-b853-6014b89c333c" /> 
+  <img width="45%" alt="image" src="https://github.com/user-attachments/assets/89462b15-f475-4815-9942-f233f5beb4c3" /> 
 </p>
 
 <p align="center">
-  <img width="45%" alt="image" src="https://github.com/user-attachments/assets/de29adcd-3019-4ea0-a635-cb46c01c5e2f" />
-  <img width="45%" alt="image" src="https://github.com/user-attachments/assets/735535c3-7e29-4e4d-9156-68aa40d10e21" />
+  <img width="45%" alt="image" src="https://github.com/user-attachments/assets/251f105e-6164-4c49-b63e-16e2d450d874"/> 
+  <img width="45%" alt="image" src="https://github.com/user-attachments/assets/de29adcd-3019-4ea0-a635-cb46c01c5e2f" /> 
+</p>
+
+<p align="center">
+  <img width="45%" src="https://github.com/user-attachments/assets/735535c3-7e29-4e4d-9156-68aa40d10e21" /> 
+  <img width="45%" alt="image"src="https://github.com/user-attachments/assets/d7312cb9-d8fc-4d08-995c-3830fda529e4" /> 
 </p>
 
 
