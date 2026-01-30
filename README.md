@@ -123,19 +123,9 @@ By implementing the same analytical logic for both applications, the project ref
 
 The application follows a **centralized backend architecture**.
 
-```
-         ┌─────────────────────────┐
-         │   Django Backend        │
-         │  (REST API + Pandas)    │
-         └───────────┬─────────────┘
-                     │
-         ┌───────────┴───────────┐
-         │                       │
-┌────────────────────┐  ┌─────────────────────┐
-│  Web Application   │  │ Desktop Application │
-│ React + Chart.js   │  │  PyQt5 + Matplotlib │ 
-└────────────────────┘  └─────────────────────┘
-```
+<p align="center">
+  <img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/824d3cb1-0257-413b-913f-1352f0c83e31" />
+</p>
 
 ### Architectural Highlights
 
@@ -405,36 +395,9 @@ A basic **token-based authentication system** is implemented to secure the appli
 
 ### Authentication Flow
 
-```
-┌──────────────┐
-│ User         │
-│ Registers or │
-│ Logs In      │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────────────┐
-│ Backend Generates    │
-│ Authentication Token │
-└──────┬───────────────┘
-       │
-       ▼
-┌──────────────────┐
-│ Token Returned   │
-│ to Client        │
-└──────┬───────────┘
-       │
-       ▼
-┌──────────────────────┐
-│ Token Stored Locally │
-└──────┬───────────────┘
-       │
-       ▼
-┌────────────────────────────┐
-│ Token Attached to All      │
-│ Protected API Requests     │
-└────────────────────────────┘
-```
+<p align="center">
+  <img width="400" height="600" alt="image" src="https://github.com/user-attachments/assets/b971f4b8-a7a7-4f80-8401-f90ab3d48ef3"" />
+</p>
 
 ### Protected Features
 
