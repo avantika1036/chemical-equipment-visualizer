@@ -724,8 +724,6 @@ python app.py
 
 ### 🌐 Web Application (Deployed)
 
-**Live Web Application:** [https://chemical-equipment-visua-79693.web.app/](https://chemical-equipment-visua-79693.web.app/)
-
 The web application is deployed on **Firebase Hosting**, providing:
 - ✅ Fast global CDN delivery
 - ✅ HTTPS security
@@ -734,6 +732,11 @@ The web application is deployed on **Firebase Hosting**, providing:
 
 **Note:** The backend API runs locally. For full functionality, ensure the Django backend is running at `http://localhost:8000`.
 
+### Live Web Application Link 
+
+https://chemical-equipment-visua-79693.web.app/
+
+---
 ---
 
 ## 20. Demo & Screenshots
@@ -866,10 +869,27 @@ Overall, this submission highlights practical understanding of **full-stack deve
 
 <div align="center">
 
-**Built with ❤️ for FOSSEE Internship Program**
+<b>Built with ❤️ for FOSSEE Internship Program</b>
 
-*Repository:* [github.com/avantika1036/chemical-equipment-visualizer](https://github.com/avantika1036/chemical-equipment-visualizer)
-*Demo Video Link:* [https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link](https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link)
-**Live Web Application:** [https://chemical-equipment-visua-79693.web.app/](https://chemical-equipment-visua-79693.web.app/)
+<br><br>
+
+<b>Repository:</b>
+<a href="https://github.com/avantika1036/chemical-equipment-visualizer">
+github.com/avantika1036/chemical-equipment-visualizer
+</a>
+
+<br><br>
+
+<b>Demo Video:</b>
+<a href="https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link">
+View Demo Video
+</a>
+
+<br><br>
+
+<b>Live Web Application:</b>
+<a href="https://chemical-equipment-visua-79693.web.app/">
+https://chemical-equipment-visua-79693.web.app/
+</a>
 
 </div>
