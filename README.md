@@ -871,17 +871,17 @@ Overall, this submission highlights practical understanding of **full-stack deve
 
 <b>Built with ❤️ for FOSSEE Internship Program</b>
 
-<b>Repository:</b>
+*Repository:*
 <a href="https://github.com/avantika1036/chemical-equipment-visualizer">
 github.com/avantika1036/chemical-equipment-visualizer
 </a>
 
-<b>Demo Video:</b>
+*Demo Video:*
 <a href="https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link">
 View Demo Video
 </a>
 
-<b>Live Web Application:</b>
+*Live Web Application:*
 <a href="https://chemical-equipment-visua-79693.web.app/">
 https://chemical-equipment-visua-79693.web.app/
 </a>
