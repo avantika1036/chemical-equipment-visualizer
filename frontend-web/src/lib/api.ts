@@ -1,35 +1,19 @@
-const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://chemical-equipment-visualizer-d05b.onrender.com/api/";
+import axios from "axios";
 
-type ApiOptions = RequestInit & {
-  auth?: boolean;
-};
+export const api = axios.create({
+  baseURL: "http://127.0.0.1:8000/api/",
+});
 
-export async function apiFetch(
-  endpoint: string,
-  options: ApiOptions = {}
-) {
-  const token = localStorage.getItem("token");
+// 🔐 attach token automatically
+api.interceptors.request.use(
+  (config) => {
+   const token = localStorage.getItem("token");
 
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-  };
+    if (token) {
+      config.headers.Authorization = `Token ${token}`;
+    }
 
-  if (options.auth !== false && token) {
-    headers.Authorization = `Token ${token}`;
-  }
-
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || "API request failed");
-  }
-
-  return response.json();
-}
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
