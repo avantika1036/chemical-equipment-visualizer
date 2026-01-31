@@ -871,8 +871,6 @@ Overall, this submission highlights practical understanding of **full-stack deve
 
 <b>Built with ❤️ for FOSSEE Internship Program</b>
 
-<br><br>
-
 <b>Repository:</b>
 <a href="https://github.com/avantika1036/chemical-equipment-visualizer">
 github.com/avantika1036/chemical-equipment-visualizer
