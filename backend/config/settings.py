@@ -24,11 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-(rbbrbfqe^6v3oo2xod1ttj)iuim$m$tv+yl+$wbj2_v!j$_+9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-import os
+DEBUG = True
 
-DEBUG = os.environ.get("DEBUG", "False") == "True"
-
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -141,4 +139,3 @@ REST_FRAMEWORK = {
     ],
 }
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
