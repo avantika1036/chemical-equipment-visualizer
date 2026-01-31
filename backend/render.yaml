@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: chemical-equipment-visualizer
+    env: python
+    buildCommand: |
+      cd backend && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: cd backend && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateScope: service
+      - key: DEBUG
+        value: "false"
