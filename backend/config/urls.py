@@ -8,5 +8,6 @@ urlpatterns = [
     path("api/", include("analytics.urls")),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve media files in both development and production.
+# Render has no separate file-server, so Django must serve them directly.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
