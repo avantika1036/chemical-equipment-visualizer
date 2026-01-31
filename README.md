@@ -665,7 +665,7 @@ source venv/bin/activate  # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
 
 # Run desktop application
-python main.py
+python app.py
 ```
 
 ---
@@ -702,7 +702,7 @@ python manage.py runserver
 ```bash
 cd frontend-desktop
 source venv/bin/activate
-python main.py
+python app.py
 ```
 
 ---
@@ -765,7 +765,9 @@ Screenshots included in repository clearly demonstrate:
 - Identical analytics results from the shared backend
 - Complete task workflow from upload → analysis → report
 
-A **short 2–3 minute demo video** is also provided as part of the submission.
+### Demo video Link 
+
+https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link
 
 ---
 
