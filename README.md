@@ -544,55 +544,62 @@ This structure ensures compatibility with both the backend analytics engine and 
 
 ---
 
-## 16. Project Structure
+## 16. 📁 Project Structure
 
 ```
 chemical-equipment-visualizer/
 │
 ├── backend/                          # Django REST API Backend
-│   ├── api/
-│   │   ├── views.py
-│   │   ├── serializers.py
-│   │   ├── models.py
-│   │   └── urls.py
-│   ├── authentication/
-│   │   ├── views.py
-│   │   └── urls.py
-│   ├── manage.py
-│   ├── requirements.txt
-│   └── db.sqlite3
+│   ├── analytics/                    
+│   │   ├── views_auth.py           
+│   │   ├── views_pdf.py             
+│   │   ├── views.py                
+│   │   ├── models.py                
+│   │   ├── serializers.py           
+│   │   └── urls.py                  
+│   ├── config/                       
+│   │   ├── settings.py              
+│   │   ├── urls.py                 
+│   │   └── wsgi.py                  
+│   ├── media/uploads/                
+│   ├── manage.py                    
+│   ├── requirements.txt              
+│   └── db.sqlite3                   
 │
 ├── frontend-web/                     # React Web Application
 │   ├── src/
-│   │   ├── components/
+│   │   ├── components/              
 │   │   │   ├── Header.tsx
 │   │   │   ├── CSVUpload.tsx
 │   │   │   ├── ChartsPanel.tsx
 │   │   │   ├── DataTable.tsx
 │   │   │   ├── StatsPanel.tsx
 │   │   │   └── UploadHistory.tsx
-│   │   ├── pages/
-│   │   │   ├── Auth.tsx
-│   │   │   ├── Index.tsx
-│   │   │   └── Home.tsx
-│   │   ├── lib/
-│   │   │   └── api.ts
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   ├── package.json
-│   └── vite.config.ts
+│   │   ├── pages/                   
+│   │   │   ├── Auth.tsx             
+│   │   │   ├── Home.tsx            
+│   │   │   └── Index.tsx            
+│   │   ├── lib/                    
+│   │   │   └── api.ts               
+│   │   ├── App.tsx                 
+│   │   └── main.tsx                 
+│   ├── package.json                 
+│   ├── tailwind.config.ts          
+│   └── vite.config.ts                
 │
 ├── frontend-desktop/                 # PyQt5 Desktop Application
-│   ├── main.py
-│   ├── login.py
-│   ├── dashboard.py
-│   ├── styles.py
-│   └── requirements.txt
+│   ├── app.py                       
+│   ├── login.py                    
+│   ├── dashboard.py                 
+│   ├── styles.py                  
+│   ├── api.py                        
+│   └── requirements.txt             
 │
 ├── sample-data/
-│   └── sample_equipment_data.csv
+│   └── sample_equipment_data.csv     
 │
-└── README.md
+└── README.md                         # Project documentation
+
 ```
 
 ---
