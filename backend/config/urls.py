@@ -3,6 +3,12 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+def home(request):
+    return JsonResponse({
+        "status": "ok",
+        "message": "Chemical Equipment Visualizer API is running"
+    })
+
 urlpatterns = [
     path("", home),
     path("admin/", admin.site.urls),
