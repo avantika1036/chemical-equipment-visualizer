@@ -878,7 +878,7 @@ github.com/avantika1036/chemical-equipment-visualizer
 
 *Demo Video:*
 <a href="https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link">
-View Demo Video
+https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link
 </a>
 
 *Live Web Application:*
