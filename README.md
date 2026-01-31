@@ -878,14 +878,10 @@ Overall, this submission highlights practical understanding of **full-stack deve
 github.com/avantika1036/chemical-equipment-visualizer
 </a>
 
-<br><br>
-
 <b>Demo Video:</b>
 <a href="https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link">
 View Demo Video
 </a>
-
-<br><br>
 
 <b>Live Web Application:</b>
 <a href="https://chemical-equipment-visua-79693.web.app/">
