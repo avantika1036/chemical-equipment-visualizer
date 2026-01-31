@@ -1,61 +1,47 @@
-import axios from "axios";
+const API_BASE = "https://chemical-equipment-visualizer-d05b.onrender.com/api/auth/";
 
-const API_BASE = "http://127.0.0.1:8000/api/auth/";
-
-// --------------------
-// LOGIN
-// --------------------
 export const login = async (email: string, password: string) => {
-  const response = await axios.post(`${API_BASE}login/`, {
-    email,
-    password,
+  const res = await fetch(`${API_BASE}login/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
   });
 
-  // backend returns:
-  // { token: "...", email: "test@example.com" }
+  if (!res.ok) {
+    throw new Error("Login failed");
+  }
 
-  const { token, email: userEmail } = response.data;
+  const data = await res.json();
 
-  // store token
-  localStorage.setItem("token", token);
-  localStorage.setItem(
-    "user",
-    JSON.stringify({ email: userEmail })
-  );
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify({ email: data.email }));
 
-  return {
-    token,
-    email: userEmail,
-  };
+  return data;
 };
 
-// --------------------
-// REGISTER
-// --------------------
-export const register = async (
-  email: string,
-  password: string
-) => {
-  await axios.post(`${API_BASE}register/`, {
-    email,
-    password,
+export const register = async (email: string, password: string) => {
+  const res = await fetch(`${API_BASE}register/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
   });
 
-  // auto-login after signup
+  if (!res.ok) {
+    throw new Error("Registration failed");
+  }
+
   return login(email, password);
 };
 
-// --------------------
-// LOGOUT
-// --------------------
 export const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
 };
 
-// --------------------
-// GET SAVED USER
-// --------------------
 export const getStoredUser = () => {
   const user = localStorage.getItem("user");
   return user ? JSON.parse(user) : null;
