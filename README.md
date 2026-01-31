@@ -25,9 +25,9 @@
 16. [Project Structure](#16-project-structure)
 17. [Setup Instructions](#17-setup-instructions)
 18. [Running the Application](#18-running-the-application)
-19. [Demo & Screenshots](#19-demo--screenshots)
-20. [Evaluation Criteria Mapping](#20-evaluation-criteria-mapping)
-21. [Challenges Faced & Solutions](#21-challenges-faced--solutions)
+19. [Live Deployment](#19-live-deployment)
+20. [Demo & Screenshots](#20-demo--screenshots)
+21. [Evaluation Criteria Mapping](#21-evaluation-criteria-mapping)
 22. [Learning Outcomes](#22-learning-outcomes)
 23. [Conclusion](#23-conclusion)
 
@@ -175,6 +175,12 @@ This design ensures **scalability** and **consistency** across platforms.
 | Tool | Purpose |
 |------|---------|
 | **Git & GitHub** | Source code management and submission |
+
+### Deployment
+
+| Platform | Purpose |
+|---------|---------|
+| Firebase Hosting | Web application deployment |
 
 ---
 
@@ -714,7 +720,23 @@ python app.py
 
 ---
 
-## 19. Demo & Screenshots
+## 19. Live Deployment
+
+### 🌐 Web Application (Deployed)
+
+**Live Web Application:** [https://chemical-equipment-visua-79693.web.app/](https://chemical-equipment-visua-79693.web.app/)
+
+The web application is deployed on **Firebase Hosting**, providing:
+- ✅ Fast global CDN delivery
+- ✅ HTTPS security
+- ✅ Automatic SSL certificates
+- ✅ 99.9% uptime guarantee
+
+**Note:** The backend API runs locally. For full functionality, ensure the Django backend is running at `http://localhost:8000`.
+
+---
+
+## 20. Demo & Screenshots
 
 The project includes both **Web** and **Desktop** implementations connected to the same backend.
 
@@ -778,7 +800,7 @@ https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive
 
 ---
 
-## 20. Evaluation Criteria Mapping
+## 21. Evaluation Criteria Mapping
 
 The following table maps internship task requirements to implemented features:
 
@@ -796,12 +818,13 @@ The following table maps internship task requirements to implemented features:
 | Sample Dataset Support | Fully compatible with provided CSV | ✅ |
 | UI/UX Consistency | Matching layouts and workflow | ✅ |
 | GitHub Source Code | Structured and documented | ✅ |
+| Web Deployment | Firebase Hosting | ✅ |
 
 This confirms **100% task completion** as per screening instructions.
 
 ---
 
-## 21. Learning Outcomes
+## 22. Learning Outcomes
 
 This project provided strong hands-on experience in:
 
@@ -820,30 +843,33 @@ It closely simulates **real-world software engineering workflows**.
 
 ---
 
-## 22. Conclusion
+## 23. Conclusion
 
-The **Chemical Equipment Parameter Visualizer** successfully fulfills all requirements of the **Intern Screening Task**.
+The **Chemical Equipment Parameter Visualizer** successfully fulfills all requirements of the **Intern Screening Task – Hybrid Web + Desktop Application**.
 
 The project demonstrates:
 
-- Proper backend–frontend separation
-- Clean architecture
-- Strong API integration
-- Consistent analytics across platforms
-- Professional UI/UX design
-- Real-world data handling
-- Scalable system design
+- Proper backend–frontend separation  
+- Clean and modular system architecture  
+- Strong REST API integration  
+- Consistent analytics across web and desktop platforms  
+- Secure token-based authentication  
+- Backend-driven data processing and PDF report generation  
+- Real-world deployment of the web application using **Firebase Hosting**
 
-By implementing both a **Web Application** and a **Desktop Application** using a shared Django backend, the project showcases practical engineering skills expected in real industry environments.
+By implementing both a **Web Application (React.js)** and a **Desktop Application (PyQt5)** powered by a shared **Django REST backend**, the system reflects how real-world engineering platforms support multiple clients using a centralized processing layer.
 
-This submission reflects not only **functional correctness**, but also attention to **structure, usability, maintainability, and presentation**.
+Overall, this submission highlights practical understanding of **full-stack development, data analytics workflows, API-driven design, and production deployment**, while maintaining clarity, scalability, and maintainability throughout the application.
 
 ---
+
 
 <div align="center">
 
 **Built with ❤️ for FOSSEE Internship Program**
 
 *Repository:* [github.com/avantika1036/chemical-equipment-visualizer](https://github.com/avantika1036/chemical-equipment-visualizer)
+*Demo Video Link:* [https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link](https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link)
+**Live Web Application:** [https://chemical-equipment-visua-79693.web.app/](https://chemical-equipment-visua-79693.web.app/)
 
 </div>
