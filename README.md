@@ -544,7 +544,7 @@ This structure ensures compatibility with both the backend analytics engine and 
 
 ---
 
-## 16. 📁 Project Structure
+## 16. Project Structure
 
 ```
 chemical-equipment-visualizer/
