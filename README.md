@@ -3,8 +3,8 @@
 > **Hybrid Web + Desktop Application**  
 
 > *Intern Screening Task – FOSSEE*
-*Repository:*
 <div>
+*Repository:*
 <a href="https://github.com/avantika1036/chemical-equipment-visualizer">
 github.com/avantika1036/chemical-equipment-visualizer
 </a>
