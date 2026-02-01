@@ -131,7 +131,7 @@ const Home: React.FC = () => {
                     <Button 
                     variant="outline"
                     size="lg"
-                    onClick={() => window.open('https://youtube.com', '_blank')}
+                    onClick={() => window.open('https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link', '_blank')}
                     className="h-16 px-8 text-lg font-bold border-2 border-neutral-light text-primary-dark rounded-2xl hover:bg-primary-dark hover:text-white hover:border-primary-dark transition-all gap-3"
                 >
                     <PlayCircle className="w-6 h-6 text-secondary" />

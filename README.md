@@ -737,7 +737,6 @@ The web application is deployed on **Firebase Hosting**, providing:
 https://chemical-equipment-visua-79693.web.app/
 
 ---
----
 
 ## 20. Demo & Screenshots
 
