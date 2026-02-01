@@ -145,17 +145,16 @@ This design ensures **scalability** and **consistency** across platforms.
 ## 6. Technology Stack
 
 ### Backend
-
 | Technology | Purpose |
 |------------|---------|
 | **Django** | Core backend framework |
 | **Django REST Framework** | API layer |
 | **Pandas** | CSV parsing and data analytics |
-| **SQLite** | Lightweight database for dataset history |
-| **ReportLab** | Server-side PDF generation |
+| **SQLite** | Database for dataset history |
+| **ReportLab** | PDF generation |
+| **Gunicorn** | Production WSGI server |
 
 ### Web Frontend
-
 | Technology | Purpose |
 |------------|---------|
 | **React.js (Vite)** | Web application framework |
@@ -164,24 +163,18 @@ This design ensures **scalability** and **consistency** across platforms.
 | **Tailwind CSS** | UI styling |
 
 ### Desktop Frontend
-
 | Technology | Purpose |
 |------------|---------|
-| **PyQt5** | Desktop application framework |
+| **PyQt5** | Desktop application |
 | **Matplotlib** | Chart visualization |
 | **Requests** | API communication |
 
-### Version Control
-
-| Tool | Purpose |
-|------|---------|
-| **Git & GitHub** | Source code management and submission |
-
-### Deployment
-
-| Platform | Purpose |
-|---------|---------|
-| Firebase Hosting | Web application deployment |
+### Deployment & Tools
+| Technology | Purpose |
+|------------|---------|
+| **Firebase Hosting** | Web app deployment |
+| **Render** | Backend deployment |
+| **Git & GitHub** | Version control |
 
 ---
 
@@ -771,7 +764,7 @@ This enables seamless switching between development and production environments.
 - Clean and maintainable architecture  
 ---
 
-```
+
 ## 20. Live Deployment
 
 ### 🌐 Web Application (Deployed on Firebase)
