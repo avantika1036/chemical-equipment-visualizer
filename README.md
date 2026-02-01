@@ -3,21 +3,16 @@
 > **Hybrid Web + Desktop Application**  
 
 > *Intern Screening Task – FOSSEE*
-*Repository:*
-<a href="https://github.com/avantika1036/chemical-equipment-visualizer">
-github.com/avantika1036/chemical-equipment-visualizer
-</a>
 
-*Demo Video:*
-<a href="https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link">
-https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link
-</a>
+---
 
-*Live Web Application:*
-<a href="https://chemical-equipment-visua-79693.web.app/">
-https://chemical-equipment-visua-79693.web.app/
-</a>
+## Quick Links
 
+- **Repository:** [github.com/avantika1036/chemical-equipment-visualizer](https://github.com/avantika1036/chemical-equipment-visualizer)
+- **Demo Video:** [https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link](https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link)
+- **Live Web App:** [https://chemical-equipment-visua-79693.web.app/](https://chemical-equipment-visua-79693.web.app/)
+
+---
 
 ---
 
