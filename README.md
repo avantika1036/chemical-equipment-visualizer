@@ -1,7 +1,25 @@
 # Chemical Equipment Parameter Visualizer
 
 > **Hybrid Web + Desktop Application**  
+
 > *Intern Screening Task – FOSSEE*
+*Repository:*
+<div>
+<a href="https://github.com/avantika1036/chemical-equipment-visualizer">
+github.com/avantika1036/chemical-equipment-visualizer
+</a>
+
+*Demo Video:*
+<a href="https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link">
+https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link
+</a>
+
+*Live Web Application:*
+<a href="https://chemical-equipment-visua-79693.web.app/">
+https://chemical-equipment-visua-79693.web.app/
+</a>
+
+</div>
 
 ---
 
