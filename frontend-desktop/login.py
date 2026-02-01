@@ -273,7 +273,7 @@ class LoginWindow(QWidget):
     def login(self, email, password):
         try:
             response = requests.post(
-                "http://127.0.0.1:8000/api/auth/login/",
+               "https://chemical-equipment-visualizer-xtbs.onrender.com/api/auth/login/",
                 json={
                     "email": email,
                     "password": password
@@ -300,7 +300,7 @@ class LoginWindow(QWidget):
     def register(self, email, password):
         try:
             response = requests.post(
-                "http://127.0.0.1:8000/api/auth/register/",
+                "https://chemical-equipment-visualizer-xtbs.onrender.com/api/auth/register/",
                 json={
                     "email": email,
                     "password": password

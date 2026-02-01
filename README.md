@@ -25,11 +25,12 @@
 16. [Project Structure](#16-project-structure)
 17. [Setup Instructions](#17-setup-instructions)
 18. [Running the Application](#18-running-the-application)
-19. [Live Deployment](#19-live-deployment)
-20. [Demo & Screenshots](#20-demo--screenshots)
-21. [Evaluation Criteria Mapping](#21-evaluation-criteria-mapping)
-22. [Learning Outcomes](#22-learning-outcomes)
-23. [Conclusion](#23-conclusion)
+19. [Environment-Based Backend Configuration](#19-environment-based-backend-configuration)
+20. [Live Deployment](#20-live-deployment)
+21. [Demo & Screenshots](#21-demo--screenshots)
+22. [Evaluation Criteria Mapping](#22-evaluation-criteria-mapping)
+23. [Learning Outcomes](#23-learning-outcomes)
+24. [Conclusion](#24-conclusion)
 
 ---
 
@@ -717,28 +718,107 @@ cd frontend-desktop
 source venv/bin/activate
 python app.py
 ```
+---
+
+## 19. Environment-Based Backend Configuration
+
+The application **automatically detects the runtime environment** and selects the appropriate backend API without requiring any manual configuration.
 
 ---
 
-## 19. Live Deployment
+### 🔧 How It Works
 
-### 🌐 Web Application (Deployed)
+The frontend determines the backend URL using `apiConfig.ts` based on the current host.
 
-The web application is deployed on **Firebase Hosting**, providing:
+```ts
+// Local Development
+if (localhost | 127.0.0.1 | 192.168.x.x | 172.x.x.x)
+→ Backend: http://localhost:8000/api/
+
+// Production (Firebase Hosting)
+if (chemical-equipment-visua-79693.web.app)
+→ Backend: https://chemical-equipment-visualizer-xtbs.onrender.com/api/
+```
+
+This enables seamless switching between development and production environments.
+
+
+### 🔹 Running Scenarios
+
+| Scenario | Frontend | Backend | Database |
+|--------|----------|---------|----------|
+| **Local Development** | http://localhost:5173 | http://localhost:8000 | Local SQLite |
+| **Live Web** | https://chemical-equipment-visua-79693.web.app/ | https://chemical-equipment-visualizer-xtbs.onrender.com | Render SQLite |
+| **Desktop App (Local)** | N/A | http://localhost:8000 | Local SQLite |
+| **Desktop App (Production)** | N/A | https://chemical-equipment-visualizer-xtbs.onrender.com | Render SQLite |
+
+
+### 📁 Implementation Files
+
+- **apiConfig.ts** — Detects environment and assigns backend base URL  
+- **api.ts** — Central API handler using BASE_URL  
+- **authService.ts** — Authentication requests via environment config  
+- **api.py** — Backend deployed on Render  
+- **settings.py** — CORS configuration for local and production origins  
+
+
+### ✅ Benefits
+
+- Single codebase for local and production environments  
+- Automatic backend selection without manual toggles  
+- Seamless Firebase deployment  
+- Desktop application supports both local and deployed backend  
+- Clean and maintainable architecture  
+---
+
+```
+## 20. Live Deployment
+
+### 🌐 Web Application (Deployed on Firebase)
+
+The web application is deployed on **Firebase Hosting**:
+- **URL:** https://chemical-equipment-visua-79693.web.app/
 - ✅ Fast global CDN delivery
 - ✅ HTTPS security
 - ✅ Automatic SSL certificates
-- ✅ 99.9% uptime guarantee
 
-**Note:** The backend API runs locally. For full functionality, ensure the Django backend is running at `http://localhost:8000`.
+**Backend API:** Automatically uses `https://chemical-equipment-visualizer-xtbs.onrender.com/api/`
 
-### Live Web Application Link 
+### 🚀 Backend Deployment (Deployed on Render)
 
-https://chemical-equipment-visua-79693.web.app/
+The Django backend is deployed on **Render**:
+- **URL:** https://chemical-equipment-visualizer-xtbs.onrender.com/
+- ✅ Automatic deployment from GitHub
+- ✅ HTTPS security with SSL
+- ✅ Environment variable management
+- ✅ 0.1 CPU, 512MB RAM (Free tier)
+
+**Deployment Configuration:**
+- Build Command: `pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --no-input`
+- Start Command: `gunicorn config.wsgi:application`
+- Language: Python 3.11
+- Auto-deploy: On every GitHub push to `main` branch
+
+### 📱 Desktop Application
+
+The desktop application connects to the deployed Render backend:
+- **Backend URL:** `https://chemical-equipment-visualizer-xtbs.onrender.com/api/`
+- Supports **Windows, macOS, and Linux**
+- No additional backend setup needed for production use
+- Can also connect to local backend for testing
+
+### Health Check
+
+Backend health check available at: https://chemical-equipment-visualizer-xtbs.onrender.com/api/
+
+Returns
+```
+Returns: {"status": "ok"} (200 OK)
+```
 
 ---
 
-## 20. Demo & Screenshots
+## 21. Demo & Screenshots
 
 The project includes both **Web** and **Desktop** implementations connected to the same backend.
 
@@ -802,7 +882,7 @@ https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive
 
 ---
 
-## 21. Evaluation Criteria Mapping
+## 22. Evaluation Criteria Mapping
 
 The following table maps internship task requirements to implemented features:
 
@@ -826,7 +906,7 @@ This confirms **100% task completion** as per screening instructions.
 
 ---
 
-## 22. Learning Outcomes
+## 23. Learning Outcomes
 
 This project provided strong hands-on experience in:
 
@@ -845,7 +925,7 @@ It closely simulates **real-world software engineering workflows**.
 
 ---
 
-## 23. Conclusion
+## 24. Conclusion
 
 The **Chemical Equipment Parameter Visualizer** successfully fulfills all requirements of the **Intern Screening Task – Hybrid Web + Desktop Application**.
 

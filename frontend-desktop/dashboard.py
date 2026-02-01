@@ -565,7 +565,7 @@ class DashboardWindow(QWidget):
         try:
             with open(file_path, "rb") as f:
                 response = requests.post(
-                    "http://127.0.0.1:8000/api/upload/",
+                    "https://chemical-equipment-visualizer-xtbs.onrender.com/api/upload/",
                     headers={"Authorization": f"Token {self.token}"},
                     files={"file": f}
                 )
@@ -795,7 +795,7 @@ class DashboardWindow(QWidget):
 
         try:
             response = requests.get(
-                f"http://127.0.0.1:8000/api/pdf/{self.current_dataset_id}/", 
+                f"https://chemical-equipment-visualizer-xtbs.onrender.com/api/pdf/{self.current_dataset_id}/", 
                 headers={"Authorization": f"Token {self.token}"}
             )
             if response.status_code != 200:
@@ -811,7 +811,7 @@ class DashboardWindow(QWidget):
     def load_history(self):
         try:
             response = requests.get(
-                "http://127.0.0.1:8000/api/history/", 
+                "https://chemical-equipment-visualizer-xtbs.onrender.com/api/history/", 
                 headers={"Authorization": f"Token {self.token}"}
             )
             if response.status_code != 200:
@@ -826,7 +826,7 @@ class DashboardWindow(QWidget):
         index = self.history_list.row(item)
         try:
             response = requests.get(
-                "http://127.0.0.1:8000/api/history/", 
+                "https://chemical-equipment-visualizer-xtbs.onrender.com/api/history/", 
                 headers={"Authorization": f"Token {self.token}"}
             )
             datasets = response.json()

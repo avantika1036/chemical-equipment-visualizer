@@ -135,11 +135,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for local development
 CORS_ALLOWED_ORIGINS = [
     "https://chemical-equipment-visua-79693.web.app",
+    "http://localhost:8080",
     "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:8080",
     "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
