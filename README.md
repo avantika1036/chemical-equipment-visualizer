@@ -12,7 +12,6 @@
 - **Demo Video:** [https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link](https://drive.google.com/file/d/14rGh_5tquR0ECx9F0zJqtWnTEFi0tWVQ/view?usp=drive_link)
 - **Live Web App:** [https://chemical-equipment-visua-79693.web.app/](https://chemical-equipment-visua-79693.web.app/)
 
----
 
 ---
 
